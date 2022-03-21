@@ -128,6 +128,8 @@ public partial class TransactionPreviewViewModel : RoutableViewModel
 				await OnAdjustFeeAsync();
 			}
 		});
+
+		ShowTransactionGraphCommand = ReactiveCommand.Create(ShowTransactionGraphAsync);
 	}
 
 	public TransactionSummaryViewModel CurrentTransactionSummary { get; }
@@ -141,6 +143,8 @@ public partial class TransactionPreviewViewModel : RoutableViewModel
 	public bool PreferPsbtWorkflow => _wallet.KeyManager.PreferPsbtWorkflow;
 
 	public ICommand AdjustFeeCommand { get; }
+
+	public IReactiveCommand ShowTransactionGraphCommand { get; }
 
 	private async Task ShowAdvancedDialogAsync()
 	{
@@ -187,6 +191,14 @@ public partial class TransactionPreviewViewModel : RoutableViewModel
 			_info.FeeRate = feeRateDialogResult.Result;
 
 			await BuildAndUpdateAsync(BuildTransactionReason.FeeChanged);
+		}
+	}
+
+	private async Task ShowTransactionGraphAsync()
+	{
+		if (_transaction is { })
+		{
+			await NavigateDialogAsync(new TransactionGraphViewModel(_transaction));
 		}
 	}
 

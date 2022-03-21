@@ -27,6 +27,12 @@
                  ToolTip.Tip="Your privacy is being protected with payjoin."
                  IsVisible="{Binding CurrentTransactionSummary.IsPayJoin}" />
 
+          <Button Command="{Binding ShowTransactionGraphCommand}" Classes="plain" Padding="10 0 10 10">
+            <Viewbox Height="20">
+              <PathIcon Data="{StaticResource branch_fork_regular}" Foreground="{DynamicResource SystemAccentColor}" />
+            </Viewbox>
+          </Button>
+          
           <Border Padding="10 0 10 10" Cursor="Hand">
             <Border.IsVisible>
               <MultiBinding Converter="{x:Static BoolConverters.Or}">
