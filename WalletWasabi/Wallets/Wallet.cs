@@ -3,9 +3,11 @@ using NBitcoin;
 using Nito.AsyncEx;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using WalletWasabi.Backend.Models;
+using WalletWasabi.Blockchain.Analysis.Clustering;
 using WalletWasabi.Blockchain.Analysis.FeesEstimation;
 using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Blockchain.TransactionBuilding;
@@ -106,6 +108,30 @@ public class Wallet : BackgroundService, IWallet
 			}
 		}
 		return walletTransactions.OrderByBlockchain().ToList();
+	}
+
+	public IEnumerable<Address> GetUnusedAddresses()
+	{
+		if (KeyManager.MasterFingerprint == null)
+		{
+			throw new InvalidOperationException("Master fingerprint should not be null");
+		}
+
+		return KeyManager.GetKeys(x => !x.Label.IsEmpty && !x.IsInternal && x.KeyState == KeyState.Clean)
+						 .Reverse()
+						 .Select(x => new Address(x, KeyManager.MasterFingerprint.Value, Network));
+	}
+
+	public Address CreateReceiveAddress(IEnumerable<string> destinationLabels)
+	{
+		if (KeyManager.MasterFingerprint == null)
+		{
+			throw new InvalidOperationException("Master fingerprint should not be null");
+		}
+
+		var hdPubKey = KeyManager.GetNextReceiveKey(new SmartLabel(destinationLabels));
+		var address = new Address(hdPubKey, KeyManager.MasterFingerprint.Value, Network);
+		return address;
 	}
 
 	public IEnumerable<SmartCoin> GetCoinjoinCoinCandidates() => Coins;
