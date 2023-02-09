@@ -13,9 +13,11 @@ using ReactiveUI;
 using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
+using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Fluent.Views.Wallets.Receive.Columns;
 using WalletWasabi.Logging;
+using WalletWasabi.WabiSabi.Backend.Banning;
 using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
@@ -157,8 +159,14 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		}
 	}
 
-	public void NavigateToAddressEdit(HdPubKey hdPubKey)
+	public async Task NavigateToAddressEditAsync(HdPubKey hdPubKey)
 	{
-		Navigate(NavigationTarget.CompactDialogScreen).To(new AddressLabelEditViewModel(this, new UiWallet(Wallet), new Address(Wallet, hdPubKey)));
+		var address = new Address(Wallet, hdPubKey);
+		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(this, new UiWallet(Wallet), address), NavigationTarget.CompactDialogScreen);
+		if (result.Kind == DialogResultKind.Normal)
+		{
+			address.SetLabels(result.Result);
+			InitializeAddresses();
+		}
 	}
 }

@@ -1,16 +1,15 @@
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using ReactiveUI;
-using WalletWasabi.Blockchain.Analysis.Clustering;
-using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Fluent.Models;
-using WalletWasabi.Fluent.ViewModels.Navigation;
+using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
 [NavigationMetaData(Title = "Edit Labels")]
-public partial class AddressLabelEditViewModel : RoutableViewModel
+public partial class AddressLabelEditViewModel : DialogViewModelBase<IEnumerable<string>>
 {
 	[AutoNotify] private bool _isCurrentTextValid;
 
@@ -31,9 +30,7 @@ public partial class AddressLabelEditViewModel : RoutableViewModel
 		NextCommand = ReactiveCommand.Create(
 			() =>
 			{
-				address.SetLabels(SuggestionLabels.Labels);
-				owner.InitializeAddresses();
-				Navigate().Back();
+				Close(DialogResultKind.Normal, SuggestionLabels.Labels);
 			},
 			canExecute);
 	}
