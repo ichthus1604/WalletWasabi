@@ -11,6 +11,7 @@ using Avalonia.Controls.Templates;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Keys;
+using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Fluent.Views.Wallets.Receive.Columns;
@@ -156,8 +157,8 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		}
 	}
 
-	public void NavigateToAddressEdit(HdPubKey hdPubKey, KeyManager keyManager)
+	public void NavigateToAddressEdit(HdPubKey hdPubKey)
 	{
-		Navigate(NavigationTarget.CompactDialogScreen).To(new AddressLabelEditViewModel(this, hdPubKey, keyManager));
+		Navigate(NavigationTarget.CompactDialogScreen).To(new AddressLabelEditViewModel(this, new UiWallet(Wallet), new Address(Wallet, hdPubKey)));
 	}
 }

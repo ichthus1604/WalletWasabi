@@ -8,7 +8,7 @@ namespace WalletWasabi.Wallets;
 
 public record Address
 {
-	internal Address(Wallet wallet, HdPubKey hdPubKey)
+	public Address(Wallet wallet, HdPubKey hdPubKey)
 	{
 		Wallet = wallet;
 		HdPubKey = hdPubKey;
