@@ -162,7 +162,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	public async Task NavigateToAddressEditAsync(HdPubKey hdPubKey)
 	{
 		var address = new Address(Wallet, hdPubKey);
-		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(this, new UiWallet(Wallet), address), NavigationTarget.CompactDialogScreen);
+		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(new UiWallet(Wallet), address), NavigationTarget.CompactDialogScreen);
 		if (result.Kind == DialogResultKind.Normal)
 		{
 			address.SetLabels(result.Result);

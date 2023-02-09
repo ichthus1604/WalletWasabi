@@ -13,7 +13,7 @@ public partial class AddressLabelEditViewModel : DialogViewModelBase<IEnumerable
 {
 	[AutoNotify] private bool _isCurrentTextValid;
 
-	public AddressLabelEditViewModel(ReceiveAddressesViewModel owner, IUiWallet wallet, Address address)
+	public AddressLabelEditViewModel(IUiWallet wallet, Address address)
 	{
 		SuggestionLabels = new SuggestionLabelsViewModel(wallet, Intent.Receive, 3, address.Labels);
 
