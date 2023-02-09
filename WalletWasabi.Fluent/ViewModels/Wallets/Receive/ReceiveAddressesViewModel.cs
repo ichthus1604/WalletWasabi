@@ -163,7 +163,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	{
 		var address = new Address(Wallet, hdPubKey);
 		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(new UiWallet(Wallet), address), NavigationTarget.CompactDialogScreen);
-		if (result.Kind == DialogResultKind.Normal)
+		if (result is { Kind: DialogResultKind.Normal, Result: { } })
 		{
 			address.SetLabels(result.Result);
 			InitializeAddresses();
