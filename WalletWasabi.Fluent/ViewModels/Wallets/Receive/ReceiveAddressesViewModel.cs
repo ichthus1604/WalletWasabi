@@ -145,7 +145,8 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 			return;
 		}
 
-		Wallet.KeyManager.SetKeyState(KeyState.Locked, model);
+		var addr = new Address(Wallet, model);
+		addr.Hide();
 		InitializeAddresses();
 
 		if (Application.Current is { Clipboard: { } clipboard })

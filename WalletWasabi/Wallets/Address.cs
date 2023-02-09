@@ -34,4 +34,9 @@ public record Address
 	{
 		HdPubKey.SetLabel(new SmartLabel(labels.ToList()), Wallet.KeyManager);
 	}
+
+	public void Hide()
+	{
+		Wallet.KeyManager.SetKeyState(KeyState.Locked, HdPubKey);
+	}
 }
