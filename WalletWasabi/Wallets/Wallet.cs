@@ -119,7 +119,7 @@ public class Wallet : BackgroundService, IWallet
 
 		return KeyManager.GetKeys(x => !x.Label.IsEmpty && !x.IsInternal && x.KeyState == KeyState.Clean)
 						 .Reverse()
-						 .Select(x => new Address(x, KeyManager.MasterFingerprint.Value, Network));
+						 .Select(x => new Address(this, x, KeyManager.MasterFingerprint.Value, Network));
 	}
 
 	public Address CreateReceiveAddress(IEnumerable<string> destinationLabels)
@@ -130,7 +130,7 @@ public class Wallet : BackgroundService, IWallet
 		}
 
 		var hdPubKey = KeyManager.GetNextReceiveKey(new SmartLabel(destinationLabels));
-		var address = new Address(hdPubKey, KeyManager.MasterFingerprint.Value, Network);
+		var address = new Address(this, hdPubKey, KeyManager.MasterFingerprint.Value, Network);
 		return address;
 	}
 
