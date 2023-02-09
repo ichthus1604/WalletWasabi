@@ -8,13 +8,13 @@ namespace WalletWasabi.Wallets;
 
 public record Address
 {
-	internal Address(Wallet wallet, HdPubKey hdPubKey, HDFingerprint hdFingerprint, Network network)
+	internal Address(Wallet wallet, HdPubKey hdPubKey)
 	{
 		Wallet = wallet;
 		HdPubKey = hdPubKey;
-		Network = network;
-		HdFingerprint = hdFingerprint;
-		BitcoinAddress = HdPubKey.GetAddress(network);
+		Network = wallet.Network;
+		HdFingerprint = Wallet.KeyManager.MasterFingerprint.Value;
+		BitcoinAddress = HdPubKey.GetAddress(wallet.Network);
 	}
 
 	internal Wallet Wallet { get; }
