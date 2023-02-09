@@ -5,6 +5,7 @@ using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
+using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
@@ -13,9 +14,9 @@ public partial class AddressLabelEditViewModel : RoutableViewModel
 {
 	[AutoNotify] private bool _isCurrentTextValid;
 
-	public AddressLabelEditViewModel(ReceiveAddressesViewModel owner, HdPubKey hdPubKey, KeyManager keyManager)
+	public AddressLabelEditViewModel(ReceiveAddressesViewModel owner, IUiWallet wallet, Address address)
 	{
-		SuggestionLabels = new SuggestionLabelsViewModel(new UiWallet(owner.Wallet), Intent.Receive, 3, hdPubKey.Label);
+		SuggestionLabels = new SuggestionLabelsViewModel(wallet, Intent.Receive, 3, address.Labels);
 
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
 
@@ -30,7 +31,7 @@ public partial class AddressLabelEditViewModel : RoutableViewModel
 		NextCommand = ReactiveCommand.Create(
 			() =>
 			{
-				hdPubKey.SetLabel(new SmartLabel(SuggestionLabels.Labels), kmToFile: keyManager);
+				address.SetLabels(SuggestionLabels.Labels);
 				owner.InitializeAddresses();
 				Navigate().Back();
 			},
