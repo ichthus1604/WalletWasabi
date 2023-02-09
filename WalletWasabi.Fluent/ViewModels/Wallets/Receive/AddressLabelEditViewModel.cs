@@ -27,12 +27,7 @@ public partial class AddressLabelEditViewModel : DialogViewModelBase<IEnumerable
 					return labelsCount > 0 || isCurrentTextValid;
 				});
 
-		NextCommand = ReactiveCommand.Create(
-			() =>
-			{
-				Close(DialogResultKind.Normal, SuggestionLabels.Labels);
-			},
-			canExecute);
+		NextCommand = ReactiveCommand.Create(() => Close(DialogResultKind.Normal, SuggestionLabels.Labels), canExecute);
 	}
 
 	public SuggestionLabelsViewModel SuggestionLabels { get; }
