@@ -5,13 +5,14 @@ using System.Reactive;
 using WalletWasabi.Blockchain.TransactionProcessing;
 using WalletWasabi.Wallets;
 using WalletWasabi.Blockchain.Transactions;
+using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
 namespace WalletWasabi.Fluent.Models;
 
 /// <summary>
 /// This interface serves the purpose of enabling Mocks for unit testing of the ViewModels that consume it.
 /// </summary>
-internal interface IUiWallet
+public interface IUiWallet
 {
 	public string Name { get; }
 
@@ -24,4 +25,6 @@ internal interface IUiWallet
 	IObservable<Money> Balance { get; }
 
 	IObservable<EventPattern<ProcessedResult?>> RelevantTransactionProcessed { get; }
+
+	IEnumerable<(string Label, int Score)> GetMostUsedLabels(Intent intent);
 }
