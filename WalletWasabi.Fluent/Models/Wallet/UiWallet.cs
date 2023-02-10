@@ -138,4 +138,9 @@ internal class UiWallet : IUiWallet
 	{
 		return _historyBuilder.BuildHistorySummary();
 	}
+
+	public void HideAddress(IAddress address)
+	{
+		//...
+	}
 }

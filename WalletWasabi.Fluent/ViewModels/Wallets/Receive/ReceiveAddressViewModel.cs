@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Avalonia;
 using Gma.QrCodeNet.Encoding;
 using NBitcoin;
+using NBitcoin.Protocol;
 using ReactiveUI;
 using WalletWasabi.Blockchain.Analysis.Clustering;
 using WalletWasabi.Blockchain.Keys;
@@ -77,30 +78,16 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 	public bool IsAutoCopyEnabled { get; }
 
-	private async Task OnShowOnHwWalletAsync(HdPubKey model, Network network, HDFingerprint? masterFingerprint)
+	private async Task OnShowOnHwWalletAsync(IAddress address)
 	{
-		if (masterFingerprint is null)
-		{
-			return;
-		}
-
-		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
 		try
 		{
-			var client = new HwiClient(network);
-			await client.DisplayAddressAsync(masterFingerprint.Value, model.FullKeyPath, cts.Token);
-		}
-		catch (FormatException ex) when (ex.Message.Contains("network") && network == Network.TestNet)
-		{
-			// This exception happens everytime on TestNet because of Wasabi Keypath handling.
-			// The user doesn't need to know about it.
+			await address.ShowOnHwWalletAsync();
 		}
 		catch (Exception ex)
 		{
-			Logger.LogError(ex);
-			var exMessage = cts.IsCancellationRequested ? "User response didn't arrive in time." : ex.ToUserFriendlyString();
-			await ShowErrorAsync(Title, exMessage, "Unable to send the address to the device");
-		};
+			await ShowErrorAsync(Title, ex.ToUserFriendlyString(), "Unable to send the address to the device");
+		}
 	}
 
 	private async Task OnSaveQrCodeAsync()

@@ -27,7 +27,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
 	private ObservableCollection<AddressViewModel> _addresses;
 
-	public ReceiveAddressesViewModel(Wallet wallet)
+	public ReceiveAddressesViewModel(IUiWallet wallet)
 	{
 		Wallet = wallet;
 		Network = wallet.Network;
@@ -57,7 +57,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		InitializeAddresses();
 	}
 
-	public Wallet Wallet { get; }
+	public IUiWallet Wallet { get; }
 
 	public Network Network { get; }
 
