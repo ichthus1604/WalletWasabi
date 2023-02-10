@@ -138,14 +138,14 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	public async Task HideAddressAsync(HdPubKey model, string address)
 	{
-		var result = await NavigateDialogAsync(new ConfirmHideAddressViewModel(model.Label));
+		var addr = new Address(Wallet, model);
+		var result = await NavigateDialogAsync(new ConfirmHideAddressViewModel(addr));
 
 		if (result.Result == false)
 		{
 			return;
 		}
 
-		var addr = new Address(Wallet, model);
 		addr.Hide();
 		InitializeAddresses();
 
