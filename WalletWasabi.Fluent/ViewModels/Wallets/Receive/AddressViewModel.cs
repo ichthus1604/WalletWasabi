@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Windows.Input;
 using Avalonia;
-using NBitcoin;
 using ReactiveUI;
-using WalletWasabi.Blockchain.Analysis.Clustering;
-using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Wallets;
+using AddressAction = System.Func<WalletWasabi.Wallets.IAddress, System.Threading.Tasks.Task>;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
@@ -14,11 +12,11 @@ public partial class AddressViewModel : ViewModelBase
 {
 	[AutoNotify] private string _address;
 
-	public AddressViewModel(ReceiveAddressesViewModel parent, Wallet wallet, HdPubKey model, Network network)
+	public AddressViewModel(AddressAction onHide, AddressAction onEdit, AddressAction onShow, IAddress model)
 	{
-		_address = model.GetP2wpkhAddress(network).ToString();
+		_address = model.Text;
 
-		Label = model.Label;
+		Label = model.Labels;
 
 		CopyAddressCommand =
 			ReactiveCommand.CreateFromTask(async () =>
@@ -30,12 +28,13 @@ public partial class AddressViewModel : ViewModelBase
 			});
 
 		HideAddressCommand =
-			ReactiveCommand.CreateFromTask(async () => await parent.HideAddressAsync(model, Address));
+			ReactiveCommand.CreateFromTask(() => onHide(model));
 
 		EditLabelCommand =
-			ReactiveCommand.CreateFromTask(() => parent.NavigateToAddressEditAsync(model));
+			ReactiveCommand.CreateFromTask(() => onEdit(model));
 
-		NavigateCommand = ReactiveCommand.Create(() => parent.Navigate().To(new ReceiveAddressViewModel(wallet, model)));
+		NavigateCommand =
+			ReactiveCommand.CreateFromTask(() => onShow(model));
 	}
 
 	public ICommand CopyAddressCommand { get; }
@@ -46,7 +45,7 @@ public partial class AddressViewModel : ViewModelBase
 
 	public ReactiveCommand<Unit, Unit> NavigateCommand { get; }
 
-	public SmartLabel Label { get; }
+	public IEnumerable<string> Label { get; }
 
 	public static Comparison<AddressViewModel?> SortAscending<T>(Func<AddressViewModel, T> selector)
 	{

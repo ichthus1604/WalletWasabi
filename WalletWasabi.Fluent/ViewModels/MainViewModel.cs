@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Fluent.AppServices.Tor;
+using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.ViewModels.AddWallet;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Authorization;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
@@ -277,7 +278,7 @@ public partial class MainViewModel : ViewModelBase
 		{
 			if (UiServices.WalletManager.TryGetSelectedAndLoggedInWalletViewModel(out var walletViewModel))
 			{
-				return new ReceiveViewModel(walletViewModel.Wallet);
+				return new ReceiveViewModel(new UiWallet(walletViewModel.Wallet));
 			}
 
 			return null;

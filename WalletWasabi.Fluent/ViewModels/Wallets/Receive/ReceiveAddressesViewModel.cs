@@ -8,16 +8,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
-using NBitcoin;
+using DynamicData;
 using ReactiveUI;
-using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Fluent.Views.Wallets.Receive.Columns;
-using WalletWasabi.Logging;
-using WalletWasabi.WabiSabi.Backend.Banning;
 using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
@@ -25,13 +22,12 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Addresses")]
 public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
-	private ObservableCollection<AddressViewModel> _addresses;
+	private ReadOnlyObservableCollection<AddressViewModel> _addresses;
 
 	public ReceiveAddressesViewModel(IUiWallet wallet)
 	{
 		Wallet = wallet;
-		Network = wallet.Network;
-		_addresses = new ObservableCollection<AddressViewModel>();
+		_addresses = new(new ObservableCollection<AddressViewModel>());
 
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
 
@@ -53,13 +49,9 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		};
 
 		Source.RowSelection!.SingleSelect = true;
-
-		InitializeAddresses();
 	}
 
 	public IUiWallet Wallet { get; }
-
-	public Network Network { get; }
 
 	public FlatTreeDataGridSource<AddressViewModel> Source { get; }
 
@@ -110,48 +102,32 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	{
 		base.OnNavigatedTo(isInHistory, disposables);
 
-		Observable
-			.FromEventPattern(Wallet.TransactionProcessor, nameof(Wallet.TransactionProcessor.WalletRelevantTransactionProcessed))
-			.ObserveOn(RxApp.MainThreadScheduler)
-			.Subscribe(_ => InitializeAddresses())
-			.DisposeWith(disposables);
+		Wallet.UnusedAddresses
+			  .Transform(CreateAddressViewModel)
+			  .Bind(out _addresses)
+			  .Subscribe()
+			  .DisposeWith(disposables);
 	}
 
-	public void InitializeAddresses()
+	private AddressViewModel CreateAddressViewModel(IAddress address)
 	{
-		try
-		{
-			_addresses.Clear();
-
-			IEnumerable<HdPubKey> keys = Wallet.KeyManager.GetKeys(x => !x.Label.IsEmpty && !x.IsInternal && x.KeyState == KeyState.Clean).Reverse();
-
-			foreach (HdPubKey key in keys)
-			{
-				_addresses.Add(new AddressViewModel(this, Wallet, key, Network));
-			}
-		}
-		catch (Exception ex)
-		{
-			Logger.LogError(ex);
-		}
+		return new AddressViewModel(HideAddressAsync, NavigateToAddressEditAsync, NavigateToAddressAsync, address);
 	}
 
-	public async Task HideAddressAsync(HdPubKey model, string address)
+	private async Task HideAddressAsync(IAddress address)
 	{
-		var addr = new Address(Wallet, model);
-		var result = await NavigateDialogAsync(new ConfirmHideAddressViewModel(addr));
+		var result = await NavigateDialogAsync(new ConfirmHideAddressViewModel(address));
 
 		if (result.Result == false)
 		{
 			return;
 		}
 
-		addr.Hide();
-		InitializeAddresses();
+		address.Hide();
 
 		if (Application.Current is { Clipboard: { } clipboard })
 		{
-			var isAddressCopied = await clipboard.GetTextAsync() == address;
+			var isAddressCopied = await clipboard.GetTextAsync() == address.Text;
 
 			if (isAddressCopied)
 			{
@@ -160,14 +136,17 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		}
 	}
 
-	public async Task NavigateToAddressEditAsync(HdPubKey hdPubKey)
+	private async Task NavigateToAddressEditAsync(IAddress address)
 	{
-		var address = new Address(Wallet, hdPubKey);
-		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(new UiWallet(Wallet), address), NavigationTarget.CompactDialogScreen);
+		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(Wallet, address), NavigationTarget.CompactDialogScreen);
 		if (result is { Kind: DialogResultKind.Normal, Result: { } })
 		{
 			address.SetLabels(result.Result);
-			InitializeAddresses();
 		}
+	}
+
+	private async Task NavigateToAddressAsync(IAddress address)
+	{
+		Navigate().To(new ReceiveAddressViewModel(Wallet, address));
 	}
 }

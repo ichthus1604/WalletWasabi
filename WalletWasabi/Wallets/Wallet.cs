@@ -110,19 +110,7 @@ public class Wallet : BackgroundService, IWallet
 		return walletTransactions.OrderByBlockchain().ToList();
 	}
 
-	public IEnumerable<Address> GetUnusedAddresses()
-	{
-		if (KeyManager.MasterFingerprint == null)
-		{
-			throw new InvalidOperationException("Master fingerprint should not be null");
-		}
-
-		return KeyManager.GetKeys(x => !x.Label.IsEmpty && !x.IsInternal && x.KeyState == KeyState.Clean)
-						 .Reverse()
-						 .Select(x => new Address(this, x));
-	}
-
-	public Address CreateReceiveAddress(IEnumerable<string> destinationLabels)
+	public HdPubKey CreateReceiveAddress(IEnumerable<string> destinationLabels)
 	{
 		if (KeyManager.MasterFingerprint == null)
 		{
@@ -130,8 +118,7 @@ public class Wallet : BackgroundService, IWallet
 		}
 
 		var hdPubKey = KeyManager.GetNextReceiveKey(new SmartLabel(destinationLabels));
-		var address = new Address(this, hdPubKey);
-		return address;
+		return hdPubKey;
 	}
 
 	public IEnumerable<SmartCoin> GetCoinjoinCoinCandidates() => Coins;

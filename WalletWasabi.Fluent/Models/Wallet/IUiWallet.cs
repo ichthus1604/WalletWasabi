@@ -16,15 +16,17 @@ public interface IUiWallet
 {
 	public string Name { get; }
 
-	IObservable<IChangeSet<Address, string>> UnusedAddresses { get; }
+	IObservable<IChangeSet<IAddress, string>> UnusedAddresses { get; }
 
 	IObservable<IChangeSet<TransactionSummary, uint256>> Transactions { get; }
 
-	Address CreateReceiveAddress(IEnumerable<string> destinationLabels);
+	IAddress CreateReceiveAddress(IEnumerable<string> destinationLabels);
 
 	IObservable<Money> Balance { get; }
 
 	IObservable<EventPattern<ProcessedResult?>> RelevantTransactionProcessed { get; }
 
 	IEnumerable<(string Label, int Score)> GetMostUsedLabels(Intent intent);
+
+	bool IsHardwareWallet();
 }

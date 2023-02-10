@@ -23,6 +23,7 @@ using System.Diagnostics.CodeAnalysis;
 using WalletWasabi.Fluent.Desktop.Extensions;
 using System.Net.Sockets;
 using System.Collections.ObjectModel;
+using WalletWasabi.Fluent.Models;
 
 namespace WalletWasabi.Fluent.Desktop;
 
@@ -121,6 +122,8 @@ public class Program
 						ThemeHelper.ApplyTheme(Global.UiConfig.DarkModeEnabled ? Theme.Dark : Theme.Light);
 					})
 					.StartWithClassicDesktopLifetime(args);
+
+			UIContext.Initialize(new QrGenerator());
 		}
 		catch (OperationCanceledException ex)
 		{

@@ -1,20 +1,14 @@
-using System.Linq;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
-using Gma.QrCodeNet.Encoding;
-using NBitcoin;
-using NBitcoin.Protocol;
 using ReactiveUI;
-using WalletWasabi.Blockchain.Analysis.Clustering;
-using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Extensions;
+using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.ViewModels.Navigation;
-using WalletWasabi.Hwi;
 using WalletWasabi.Logging;
 using WalletWasabi.Wallets;
 
@@ -23,16 +17,12 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Address")]
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
-	private readonly Wallet _wallet;
-	private readonly HdPubKey _model;
-
-	public ReceiveAddressViewModel(Wallet wallet, HdPubKey model)
+	public ReceiveAddressViewModel(IUiWallet wallet, IAddress model)
 	{
-		_wallet = wallet;
-		_model = model;
-		Address = _model.GetP2wpkhAddress(_wallet.Network).ToString();
-		Labels = _model.Label;
-		IsHardwareWallet = _wallet.KeyManager.IsHardwareWallet;
+		Model = model;
+		Address = model.Text;
+		Labels = model.Labels;
+		IsHardwareWallet = wallet.IsHardwareWallet();
 		IsAutoCopyEnabled = Services.UiConfig.Autocopy;
 
 		GenerateQrCode();
@@ -49,9 +39,9 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 			}
 		});
 
-		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(async () => await OnShowOnHwWalletAsync(_model, _wallet.Network, _wallet.KeyManager.MasterFingerprint));
+		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(OnShowOnHwWalletAsync);
 
-		SaveQrCodeCommand = ReactiveCommand.CreateFromTask(async () => await OnSaveQrCodeAsync());
+		SaveQrCodeCommand = ReactiveCommand.CreateFromTask(OnSaveQrCodeAsync);
 
 		SaveQrCodeCommand.ThrownExceptions
 			.ObserveOn(RxApp.TaskpoolScheduler)
@@ -59,6 +49,8 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		NextCommand = CancelCommand;
 	}
+
+	private IAddress Model { get; }
 
 	public ReactiveCommand<string, Unit>? QrCodeCommand { get; set; }
 
@@ -70,7 +62,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 	public string Address { get; }
 
-	public SmartLabel Labels { get; }
+	public IEnumerable<string> Labels { get; }
 
 	public bool[,]? QrCode { get; set; }
 
@@ -78,11 +70,11 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 	public bool IsAutoCopyEnabled { get; }
 
-	private async Task OnShowOnHwWalletAsync(IAddress address)
+	private async Task OnShowOnHwWalletAsync()
 	{
 		try
 		{
-			await address.ShowOnHwWalletAsync();
+			await Model.ShowOnHwWalletAsync();
 		}
 		catch (Exception ex)
 		{
@@ -102,28 +94,20 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 	{
 		base.OnNavigatedTo(isInHistory, disposables);
 
-		Observable
-			.FromEventPattern(_wallet.TransactionProcessor, nameof(_wallet.TransactionProcessor.WalletRelevantTransactionProcessed))
-			.ObserveOn(RxApp.MainThreadScheduler)
-			.Subscribe(_ =>
-			{
-				if (_wallet.KeyManager.GetKeys(x => x == _model && x.KeyState == KeyState.Used).Any())
-				{
-					Navigate().Back();
-				}
-			})
-			.DisposeWith(disposables);
+		this.WhenAnyValue(x => x.Model.IsUsed)
+			.Subscribe(_ => Navigate().Back());
 	}
 
-	private void GenerateQrCode()
+	private async Task<bool[,]> GenerateQrCode()
 	{
 		try
 		{
-			QrCode = new QrEncoder().Encode(Address.ToUpperInvariant()).Matrix.InternalArray;
+			return await UIContext.QrCodeGenerator.Generate(Address.ToUpperInvariant());
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex);
+			return new bool[0, 0];
 		}
 	}
 }

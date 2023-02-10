@@ -8,7 +8,7 @@ namespace WalletWasabi.Fluent.ViewModels.Dialogs;
 [NavigationMetaData(Title = "Hide Address")]
 public partial class ConfirmHideAddressViewModel : DialogViewModelBase<bool>
 {
-	public ConfirmHideAddressViewModel(Address address)
+	public ConfirmHideAddressViewModel(IAddress address)
 	{
 		Label = address.Labels;
 
