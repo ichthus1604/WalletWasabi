@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,7 +28,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	public ReceiveAddressesViewModel(IUiWallet wallet)
 	{
 		Wallet = wallet;
-		_addresses = new(new ObservableCollection<AddressViewModel>());
 
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
 
@@ -37,6 +37,11 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		// Actions		ActionsColumnView	-			90			-				-			false
 		// Address		AddressColumnView	Address		2*			-				-			true
 		// Labels		LabelsColumnView	Labels		210			-				-			false
+
+		Wallet.UnusedAddresses
+			  .Transform(CreateAddressViewModel)
+			  .Bind(out _addresses)
+			  .Subscribe();
 
 		Source = new FlatTreeDataGridSource<AddressViewModel>(_addresses)
 		{
@@ -101,12 +106,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	protected override void OnNavigatedTo(bool isInHistory, CompositeDisposable disposables)
 	{
 		base.OnNavigatedTo(isInHistory, disposables);
-
-		Wallet.UnusedAddresses
-			  .Transform(CreateAddressViewModel)
-			  .Bind(out _addresses)
-			  .Subscribe()
-			  .DisposeWith(disposables);
 	}
 
 	private AddressViewModel CreateAddressViewModel(IAddress address)
