@@ -98,23 +98,23 @@ public class Wallet : BackgroundService, IWallet
 	public bool IsLoggedIn { get; private set; }
 
 	public Kitchen Kitchen { get; } = new();
-	
+
 	public IKeyChain? KeyChain { get; }
 
 	public IDestinationProvider DestinationProvider { get; }
-	
+
 	public int AnonScoreTarget => KeyManager.AnonScoreTarget;
 	public bool ConsolidationMode => false;
-	
+
 	public bool IsMixable =>
 		State == WalletState.Started // Only running wallets
 		&& !KeyManager.IsWatchOnly // that are not watch-only wallets
 		&& Kitchen.HasIngredients;
-	
+
 	public TimeSpan FeeRateMedianTimeFrame => TimeSpan.FromHours(KeyManager.FeeRateMedianTimeFrameHours);
 
 	public bool IsUnderPlebStop => Coins.TotalAmount() <= KeyManager.PlebStopThreshold;
-	
+
 	public Task<bool> IsWalletPrivateAsync() => Task.FromResult(IsWalletPrivate());
 
 	public bool IsWalletPrivate() => GetPrivacyPercentage(new CoinsView(Coins), AnonScoreTarget) >= 1;
@@ -124,7 +124,7 @@ public class Wallet : BackgroundService, IWallet
 	public Task<IEnumerable<SmartTransaction>> GetTransactionsAsync() => Task.FromResult(GetTransactions());
 
 	public IEnumerable<SmartCoin> GetCoinjoinCoinCandidates() => Coins;
-	
+
 	public IEnumerable<SmartTransaction> GetTransactions()
 	{
 		var walletTransactions = new List<SmartTransaction>();
@@ -150,8 +150,6 @@ public class Wallet : BackgroundService, IWallet
 		var hdPubKey = KeyManager.GetNextReceiveKey(new SmartLabel(destinationLabels));
 		return hdPubKey;
 	}
-
-	public IEnumerable<SmartCoin> GetCoinjoinCoinCandidates() => Coins;
 
 	private double GetPrivacyPercentage(CoinsView coins, int privateThreshold)
 	{
@@ -464,9 +462,9 @@ public class Wallet : BackgroundService, IWallet
 
 		// Go through the filters and queue to download the matches.
 		await BitcoinStore.IndexStore.ForeachFiltersAsync(
-			async (filterModel) => 
-				await ProcessFilterModelAsync(filterModel, cancel).ConfigureAwait(false), 
-			new Height(bestKeyManagerHeight.Value + 1), 
+			async (filterModel) =>
+				await ProcessFilterModelAsync(filterModel, cancel).ConfigureAwait(false),
+			new Height(bestKeyManagerHeight.Value + 1),
 			cancel).ConfigureAwait(false);
 	}
 
