@@ -20,7 +20,9 @@ public partial class LabelEntryDialogViewModel : DialogViewModelBase<SmartLabel?
 	public LabelEntryDialogViewModel(Wallet wallet, SmartLabel label)
 	{
 		_wallet = wallet;
-		SuggestionLabels = new SuggestionLabelsViewModel(new UiWallet(wallet), Intent.Send, 3)
+		// Temporary measure until the refactor is completed.
+		var uiWallet = new UiWallet(wallet);
+		SuggestionLabels = new SuggestionLabelsViewModel(uiWallet, Intent.Send, 3)
 		{
 			Labels = { label.Labels }
 		};
