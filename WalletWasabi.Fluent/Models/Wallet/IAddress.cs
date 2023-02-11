@@ -1,9 +1,10 @@
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WalletWasabi.Wallets;
 
-public interface IAddress
+public interface IAddress : IReactiveObject
 {
 	string Text { get; }
 	IEnumerable<string> Labels { get; }

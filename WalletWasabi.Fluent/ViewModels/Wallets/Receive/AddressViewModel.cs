@@ -11,12 +11,13 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 public partial class AddressViewModel : ViewModelBase
 {
 	[AutoNotify] private string _address;
+	[AutoNotify] private IEnumerable<string> _label;
 
 	public AddressViewModel(AddressAction onHide, AddressAction onEdit, AddressAction onShow, IAddress model)
 	{
 		_address = model.Text;
 
-		Label = model.Labels;
+		model.WhenAnyValue(x => x.Labels).BindTo(this, viewModel => viewModel.Label);
 
 		CopyAddressCommand =
 			ReactiveCommand.CreateFromTask(async () =>
@@ -44,8 +45,6 @@ public partial class AddressViewModel : ViewModelBase
 	public ICommand EditLabelCommand { get; }
 
 	public ReactiveCommand<Unit, Unit> NavigateCommand { get; }
-
-	public IEnumerable<string> Label { get; }
 
 	public static Comparison<AddressViewModel?> SortAscending<T>(Func<AddressViewModel, T> selector)
 	{

@@ -2,6 +2,7 @@ using DynamicData;
 using NBitcoin;
 using System.Collections.Generic;
 using System.Reactive;
+using ReactiveUI;
 using WalletWasabi.Blockchain.TransactionProcessing;
 using WalletWasabi.Wallets;
 using WalletWasabi.Blockchain.Transactions;
