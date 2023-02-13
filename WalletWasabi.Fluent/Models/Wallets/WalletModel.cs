@@ -11,15 +11,16 @@ using WalletWasabi.Blockchain.Transactions;
 using WalletWasabi.Fluent.Extensions;
 using WalletWasabi.Fluent.Helpers;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
+using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.Models.Wallets;
 
 internal class WalletModel : IWalletModel
 {
-	private readonly WalletWasabi.Wallets.Wallet _wallet;
+	private readonly Wallet _wallet;
 	private readonly TransactionHistoryBuilder _historyBuilder;
 
-	public WalletModel(WalletWasabi.Wallets.Wallet wallet)
+	public WalletModel(Wallet wallet)
 	{
 		_wallet = wallet;
 		_historyBuilder = new TransactionHistoryBuilder(_wallet);
