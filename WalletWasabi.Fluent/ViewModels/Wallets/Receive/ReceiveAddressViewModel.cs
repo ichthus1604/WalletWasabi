@@ -4,20 +4,19 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia;
 using ReactiveUI;
 using WalletWasabi.Extensions;
-using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Logging;
-using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
 [NavigationMetaData(Title = "Receive Address")]
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
+	private bool[,]? _qrCode;
+
 	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model)
 	{
 		Model = model;
@@ -32,15 +31,9 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		EnableBack = true;
 
-		CopyAddressCommand = ReactiveCommand.CreateFromTask(async () =>
-		{
-			if (Application.Current is { Clipboard: { } clipboard })
-			{
-				await clipboard.SetTextAsync(Address);
-			}
-		});
+		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => UIContext.Clipboard.SetTextAsync(Address));
 
-		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(OnShowOnHwWalletAsync);
+		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(ShowOnHwWalletAsync);
 
 		SaveQrCodeCommand = ReactiveCommand.CreateFromTask(OnSaveQrCodeAsync);
 
@@ -65,13 +58,17 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 	public IEnumerable<string> Labels { get; }
 
-	public bool[,]? QrCode { get; set; }
-
 	public bool IsHardwareWallet { get; }
 
 	public bool IsAutoCopyEnabled { get; }
 
-	private async Task OnShowOnHwWalletAsync()
+	public bool[,]? QrCode
+	{
+		get => _qrCode;
+		set => this.RaiseAndSetIfChanged(ref _qrCode, value);
+	}
+
+	private async Task ShowOnHwWalletAsync()
 	{
 		try
 		{
@@ -96,19 +93,20 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 		base.OnNavigatedTo(isInHistory, disposables);
 
 		this.WhenAnyValue(x => x.Model.IsUsed)
+			.Where(x => x)
 			.Subscribe(_ => Navigate().Back());
 	}
 
-	private async Task<bool[,]> GenerateQrCode()
+	private void GenerateQrCode()
 	{
 		try
 		{
-			return await UIContext.QrCodeGenerator.Generate(Address.ToUpperInvariant());
+			UIContext.QrCodeGenerator.Generate(Address.ToUpperInvariant())
+									 .Subscribe(x => QrCode = x);
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex);
-			return new bool[0, 0];
 		}
 	}
 }
