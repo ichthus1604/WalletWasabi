@@ -121,10 +121,10 @@ public class Program
 							: "Renderer: Avalonia Software");
 
 						ThemeHelper.ApplyTheme(Global.UiConfig.DarkModeEnabled ? Theme.Dark : Theme.Light);
+
+						UIContext.Initialize(new QrGenerator());
 					})
 					.StartWithClassicDesktopLifetime(args);
-
-			UIContext.Initialize(new QrGenerator());
 		}
 		catch (OperationCanceledException ex)
 		{
