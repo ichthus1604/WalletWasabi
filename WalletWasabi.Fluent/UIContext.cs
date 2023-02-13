@@ -4,6 +4,8 @@ using WalletWasabi.Fluent.Models.Wallets;
 
 namespace WalletWasabi.Fluent;
 
+#nullable disable
+
 /// <summary>
 /// Encapsulates external dependencies that might be mocked or otherwise replaced in unit tests.
 /// Decoupling from Avalonia is an ultimate long-term goal that we're not targeting right now, therefore this class depends on it.
@@ -30,3 +32,5 @@ public static class UIContext
 
 	public static IClipboard Clipboard { get; private set; }
 }
+
+#nullable enable
