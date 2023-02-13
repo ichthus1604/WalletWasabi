@@ -15,7 +15,7 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Address")]
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
-	private bool[,] _qrCode;
+	private bool[,]? _qrCode;
 
 	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model)
 	{
@@ -62,7 +62,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 	public bool IsAutoCopyEnabled { get; }
 
-	public bool[,] QrCode
+	public bool[,]? QrCode
 	{
 		get => _qrCode;
 		set => this.RaiseAndSetIfChanged(ref _qrCode, value);
