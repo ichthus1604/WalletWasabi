@@ -85,7 +85,7 @@ public partial class WalletViewModel : WalletViewModelBase
 
 		SendCommand = ReactiveCommand.Create(() => Navigate(NavigationTarget.DialogScreen).To(new SendViewModel(this)));
 
-		ReceiveCommand = ReactiveCommand.Create(() => Navigate(NavigationTarget.DialogScreen).To(new ReceiveViewModel(new UiWallet(wallet)))); // Temporary measure until refactoring is completed.
+		ReceiveCommand = ReactiveCommand.Create(() => Navigate(NavigationTarget.DialogScreen).To(new ReceiveViewModel(new WalletModel(wallet)))); // Temporary measure until refactoring is completed.
 
 		WalletInfoCommand = ReactiveCommand.CreateFromTask(async () =>
 		{

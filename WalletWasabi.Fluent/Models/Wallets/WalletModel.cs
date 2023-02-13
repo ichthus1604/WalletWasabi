@@ -14,12 +14,12 @@ using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
 namespace WalletWasabi.Fluent.Models.Wallets;
 
-internal class UiWallet : IUiWallet
+internal class WalletModel : IWalletModel
 {
 	private readonly WalletWasabi.Wallets.Wallet _wallet;
 	private readonly TransactionHistoryBuilder _historyBuilder;
 
-	public UiWallet(WalletWasabi.Wallets.Wallet wallet)
+	public WalletModel(WalletWasabi.Wallets.Wallet wallet)
 	{
 		_wallet = wallet;
 		_historyBuilder = new TransactionHistoryBuilder(_wallet);

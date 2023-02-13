@@ -2,8 +2,8 @@ using DynamicData;
 
 namespace WalletWasabi.Fluent.Models.Wallets;
 
-public static class UIWalletExtensions
+public static class WalletModelExtensions
 {
-	public static IObservable<IChangeSet<IAddress, string>> GetUnusedAddresses(this IUiWallet wallet) =>
+	public static IObservable<IChangeSet<IAddress, string>> GetUnusedAddresses(this IWalletModel wallet) =>
 		wallet.Addresses.Filter(x => !x.IsUsed);
 }

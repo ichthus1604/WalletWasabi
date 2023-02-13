@@ -12,7 +12,7 @@ using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
 namespace WalletWasabi.Tests.Gui.TestDoubles;
 
-public class TestWallet : IUiWallet
+public class TestWallet : IWalletModel
 {
 	public TestWallet(IEnumerable<IAddress> addresses)
 	{

@@ -18,7 +18,7 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Address")]
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
-	public ReceiveAddressViewModel(IUiWallet wallet, IAddress model)
+	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model)
 	{
 		Model = model;
 		Address = model.Text;

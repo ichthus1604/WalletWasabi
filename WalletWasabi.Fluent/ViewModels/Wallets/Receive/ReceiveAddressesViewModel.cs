@@ -26,7 +26,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
 	private ReadOnlyObservableCollection<AddressViewModel> _addresses;
 
-	public ReceiveAddressesViewModel(IUiWallet wallet)
+	public ReceiveAddressesViewModel(IWalletModel wallet)
 	{
 		Wallet = wallet;
 
@@ -57,7 +57,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		Source.RowSelection!.SingleSelect = true;
 	}
 
-	public IUiWallet Wallet { get; }
+	public IWalletModel Wallet { get; }
 
 	public FlatTreeDataGridSource<AddressViewModel> Source { get; }
 

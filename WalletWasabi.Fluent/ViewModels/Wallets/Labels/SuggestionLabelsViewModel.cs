@@ -15,14 +15,14 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
 public partial class SuggestionLabelsViewModel : ViewModelBase
 {
-	private readonly IUiWallet _wallet;
+	private readonly IWalletModel _wallet;
 	private readonly SourceList<SuggestionLabelViewModel> _sourceLabels;
 	private readonly ObservableCollectionExtended<string> _topSuggestions;
 	private readonly ObservableCollectionExtended<string> _suggestions;
 	private readonly ObservableCollectionExtended<string> _labels;
 	[AutoNotify] private bool _isCurrentTextValid;
 
-	public SuggestionLabelsViewModel(IUiWallet wallet, Intent intent, int topSuggestionsCount, IEnumerable<string>? labels = null)
+	public SuggestionLabelsViewModel(IWalletModel wallet, Intent intent, int topSuggestionsCount, IEnumerable<string>? labels = null)
 	{
 		_wallet = wallet;
 		_sourceLabels = new SourceList<SuggestionLabelViewModel>();

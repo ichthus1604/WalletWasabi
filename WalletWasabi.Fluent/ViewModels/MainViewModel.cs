@@ -280,7 +280,7 @@ public partial class MainViewModel : ViewModelBase
 			if (UiServices.WalletManager.TryGetSelectedAndLoggedInWalletViewModel(out var walletViewModel))
 			{
 				// Temporary measure until the refactor is completed.
-				var uiWallet = new UiWallet(walletViewModel.Wallet);
+				var uiWallet = new WalletModel(walletViewModel.Wallet);
 				return new ReceiveViewModel(uiWallet);
 			}
 

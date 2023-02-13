@@ -22,9 +22,9 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 	NavigationTarget = NavigationTarget.DialogScreen)]
 public partial class ReceiveViewModel : RoutableViewModel
 {
-	private readonly IUiWallet _wallet;
+	private readonly IWalletModel _wallet;
 
-	public ReceiveViewModel(IUiWallet wallet)
+	public ReceiveViewModel(IWalletModel wallet)
 	{
 		_wallet = wallet;
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
