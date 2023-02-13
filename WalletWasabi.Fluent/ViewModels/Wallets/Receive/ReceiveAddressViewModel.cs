@@ -97,11 +97,12 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 			.Subscribe(_ => Navigate().Back());
 	}
 
-	private async Task GenerateQrCode()
+	private void GenerateQrCode()
 	{
 		try
 		{
-			QrCode = await UIContext.QrCodeGenerator.Generate(Address.ToUpperInvariant());
+			UIContext.QrCodeGenerator.Generate(Address.ToUpperInvariant())
+									 .Subscribe(x => QrCode = x);
 		}
 		catch (Exception ex)
 		{
