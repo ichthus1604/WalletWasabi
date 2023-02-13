@@ -1,17 +1,17 @@
-using NBitcoin;
-using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+using NBitcoin;
+using ReactiveUI;
 using WalletWasabi.Blockchain.Analysis.Clustering;
 using WalletWasabi.Blockchain.Keys;
 using WalletWasabi.Extensions;
 using WalletWasabi.Hwi;
 using WalletWasabi.Logging;
+using WalletWasabi.Wallets;
 
-namespace WalletWasabi.Wallets;
+namespace WalletWasabi.Fluent.Models.Wallets;
 
 public class Address : ReactiveObject, IAddress
 {

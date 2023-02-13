@@ -1,4 +1,5 @@
 using WalletWasabi.Fluent.Models;
+using WalletWasabi.Fluent.Models.Wallets;
 
 namespace WalletWasabi.Fluent;
 

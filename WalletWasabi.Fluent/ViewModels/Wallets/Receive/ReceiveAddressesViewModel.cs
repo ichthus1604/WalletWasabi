@@ -12,6 +12,7 @@ using Avalonia.Controls.Templates;
 using DynamicData;
 using ReactiveUI;
 using WalletWasabi.Fluent.Models;
+using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Navigation;
@@ -38,7 +39,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		// Address		AddressColumnView	Address		2*			-				-			true
 		// Labels		LabelsColumnView	Labels		210			-				-			false
 
-		Wallet.UnusedAddresses
+		Wallet.GetUnusedAddresses()
 			  .Transform(CreateAddressViewModel)
 			  .Bind(out _addresses)
 			  .Subscribe();

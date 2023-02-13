@@ -1,14 +1,10 @@
+using System.Collections.Generic;
 using DynamicData;
 using NBitcoin;
-using System.Collections.Generic;
-using System.Reactive;
-using ReactiveUI;
-using WalletWasabi.Blockchain.TransactionProcessing;
-using WalletWasabi.Wallets;
 using WalletWasabi.Blockchain.Transactions;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
-namespace WalletWasabi.Fluent.Models;
+namespace WalletWasabi.Fluent.Models.Wallets;
 
 /// <summary>
 /// This interface serves the purpose of enabling Mocks for unit testing of the ViewModels that consume it.
@@ -17,15 +13,13 @@ public interface IUiWallet
 {
 	public string Name { get; }
 
-	IObservable<IChangeSet<IAddress, string>> UnusedAddresses { get; }
-
 	IObservable<IChangeSet<TransactionSummary, uint256>> Transactions { get; }
 
 	IAddress CreateReceiveAddress(IEnumerable<string> destinationLabels);
 
 	IObservable<Money> Balance { get; }
 
-	IObservable<EventPattern<ProcessedResult?>> RelevantTransactionProcessed { get; }
+	IObservable<IChangeSet<IAddress, string>> Addresses { get; }
 
 	IEnumerable<(string Label, int Score)> GetMostUsedLabels(Intent intent);
 

@@ -1,14 +1,8 @@
-using Gma.QrCodeNet.Encoding;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using WalletWasabi.Wallets;
+using Gma.QrCodeNet.Encoding;
 
-namespace WalletWasabi.Fluent.Models;
-
-public interface IQrCodeGenerator
-{
-	IObservable<bool[,]> Generate(string data);
-}
+namespace WalletWasabi.Fluent.Models.Wallets;
 
 public class QrGenerator : IQrCodeGenerator
 {

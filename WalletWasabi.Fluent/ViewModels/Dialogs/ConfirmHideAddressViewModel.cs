@@ -1,5 +1,6 @@
 using ReactiveUI;
 using System.Collections.Generic;
+using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Wallets;
 

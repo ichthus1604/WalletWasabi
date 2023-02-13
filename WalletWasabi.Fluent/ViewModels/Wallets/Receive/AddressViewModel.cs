@@ -3,8 +3,9 @@ using System.Reactive;
 using System.Windows.Input;
 using Avalonia;
 using ReactiveUI;
+using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Wallets;
-using AddressAction = System.Func<WalletWasabi.Wallets.IAddress, System.Threading.Tasks.Task>;
+using AddressAction = System.Func<WalletWasabi.Fluent.Models.Wallets.IAddress, System.Threading.Tasks.Task>;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using DynamicData;
 using ReactiveUI;
 using WalletWasabi.Fluent.Extensions;
-using WalletWasabi.Fluent.Models;
+using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
@@ -43,9 +44,11 @@ public partial class ReceiveViewModel : RoutableViewModel
 		ShowExistingAddressesCommand = ReactiveCommand.Create(OnShowExistingAddresses);
 
 		IsExistingAddressesButtonVisible =
-			_wallet.UnusedAddresses
-				   .ToCollection()
-				   .Select(x => x.Any());
+			_wallet
+				.GetUnusedAddresses()
+				.ToCollection()
+				.Select(x => x.Any())
+				.StartWith(false);
 	}
 
 	public SuggestionLabelsViewModel SuggestionLabels { get; }
