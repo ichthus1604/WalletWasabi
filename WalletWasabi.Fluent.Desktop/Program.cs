@@ -122,7 +122,7 @@ public class Program
 
 						ThemeHelper.ApplyTheme(Global.UiConfig.DarkModeEnabled ? Theme.Dark : Theme.Light);
 
-						UIContext.Initialize(new QrGenerator());
+						UIContext.InitializeForRuntime();
 					})
 					.StartWithClassicDesktopLifetime(args);
 		}

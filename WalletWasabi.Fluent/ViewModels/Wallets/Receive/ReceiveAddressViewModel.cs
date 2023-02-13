@@ -4,7 +4,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia;
 using ReactiveUI;
 using WalletWasabi.Extensions;
 using WalletWasabi.Fluent.Models.Wallets;
@@ -32,15 +31,9 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		EnableBack = true;
 
-		CopyAddressCommand = ReactiveCommand.CreateFromTask(async () =>
-		{
-			if (Application.Current is { Clipboard: { } clipboard })
-			{
-				await clipboard.SetTextAsync(Address);
-			}
-		});
+		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => UIContext.Clipboard.SetTextAsync(Address));
 
-		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(OnShowOnHwWalletAsync);
+		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(ShowOnHwWalletAsync);
 
 		SaveQrCodeCommand = ReactiveCommand.CreateFromTask(OnSaveQrCodeAsync);
 
@@ -75,7 +68,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 		set => this.RaiseAndSetIfChanged(ref _qrCode, value);
 	}
 
-	private async Task OnShowOnHwWalletAsync()
+	private async Task ShowOnHwWalletAsync()
 	{
 		try
 		{
