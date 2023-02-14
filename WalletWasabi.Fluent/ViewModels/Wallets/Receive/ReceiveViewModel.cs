@@ -42,7 +42,7 @@ public partial class ReceiveViewModel : RoutableViewModel
 
 		ShowExistingAddressesCommand = ReactiveCommand.Create(OnShowExistingAddresses);
 
-		IsExistingAddressesButtonVisible =
+		HasUnusedAddresses =
 			_wallet
 				.GetUnusedAddresses()
 				.ToCollection()
@@ -53,7 +53,7 @@ public partial class ReceiveViewModel : RoutableViewModel
 	public SuggestionLabelsViewModel SuggestionLabels { get; }
 
 	public ICommand ShowExistingAddressesCommand { get; }
-	public IObservable<bool> IsExistingAddressesButtonVisible { get; }
+	public IObservable<bool> HasUnusedAddresses { get; }
 
 	private void OnNext()
 	{
