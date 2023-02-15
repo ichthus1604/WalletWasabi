@@ -66,7 +66,7 @@ public class SuggestionLabelsViewModelTests
 	}
 
 	[Fact]
-	public void Suggestions_should_not_contain_labels_already_chosen__()
+	public void Top_suggestions_should_not_contain_labels_already_chosen()
 	{
 		var mostUsedLabels = new List<(string Label, int Score)>
 		{
@@ -80,7 +80,26 @@ public class SuggestionLabelsViewModelTests
 		sut.Labels.Add("Label 3");
 		sut.Labels.Add("Label 1");
 
-		sut.Suggestions.Should().NotContain(new[] { "Label 3", "Label 1" });
+		sut.TopSuggestions.Should().NotContain(new[] { "Label 3", "Label 1" });
+	}
+
+	[Fact]
+	public void Top_suggestions_should_be_empty_when_all_labels_are_chosen()
+	{
+		var mostUsedLabels = new List<(string Label, int Score)>
+		{
+			("Label 1", 1),
+			("Label 2", 3),
+			("Label 3", 2),
+		};
+		var wallet = new TestWallet(mostUsedLabels);
+		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, 1);
+
+		sut.Labels.Add("Label 1");
+		sut.Labels.Add("Label 2");
+		sut.Labels.Add("Label 3");
+
+		sut.TopSuggestions.Should().BeEmpty();
 	}
 
 	private class TestWallet : IWalletModel
