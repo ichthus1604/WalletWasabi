@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DynamicData;
+using FluentAssertions;
 using NBitcoin;
 using WalletWasabi.Blockchain.Transactions;
 using WalletWasabi.Fluent.Models.Wallets;
@@ -31,6 +32,56 @@ public class SuggestionLabelsViewModelTests
 		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, maxSuggestions);
 
 		Assert.Equal(expected, sut.TopSuggestions.Count);
+	}
+	
+	[Fact]
+	public void Suggestions_should_be_in_correct_order()
+	{
+		var mostUsedLabels = new List<(string Label, int Score)>
+		{
+			("Label 1", 1),
+			("Label 2", 3),
+			("Label 3", 2),
+		};
+		var wallet = new TestWallet(mostUsedLabels);
+		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, 100);
+
+		sut.Suggestions.Should().ContainInOrder("Label 2", "Label 3", "Label 1");
+	}
+
+	[Fact]
+	public void Suggestions_should_not_contain_labels_already_chosen()
+	{
+		var mostUsedLabels = new List<(string Label, int Score)>
+		{
+			("Label 1", 1),
+			("Label 2", 3),
+			("Label 3", 2),
+		};
+		var wallet = new TestWallet(mostUsedLabels);
+		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, 100);
+
+		sut.Labels.Add("Label 3");
+
+		sut.Suggestions.Should().NotContain("Label 3");
+	}
+
+	[Fact]
+	public void Suggestions_should_not_contain_labels_already_chosen__()
+	{
+		var mostUsedLabels = new List<(string Label, int Score)>
+		{
+			("Label 1", 1),
+			("Label 2", 3),
+			("Label 3", 2),
+		};
+		var wallet = new TestWallet(mostUsedLabels);
+		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, 100);
+
+		sut.Labels.Add("Label 3");
+		sut.Labels.Add("Label 1");
+
+		sut.Suggestions.Should().NotContain(new[] { "Label 3", "Label 1" });
 	}
 
 	private class TestWallet : IWalletModel
