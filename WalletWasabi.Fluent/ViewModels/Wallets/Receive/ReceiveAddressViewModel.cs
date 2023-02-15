@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NBitcoin.Secp256k1;
 using ReactiveUI;
 using WalletWasabi.Extensions;
 using WalletWasabi.Fluent.Models.Wallets;
@@ -15,10 +16,12 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Address")]
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
+	private readonly UIContext _context;
 	private bool[,]? _qrCode;
 
-	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, bool isAutoCopyEnabled)
+	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, UIContext context, bool isAutoCopyEnabled)
 	{
+		_context = context;
 		Model = model;
 		Address = model.Text;
 		Labels = model.Labels;
@@ -31,7 +34,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		EnableBack = true;
 
-		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => UIContext.Clipboard.SetTextAsync(Address));
+		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => context.Clipboard.SetTextAsync(Address));
 
 		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(ShowOnHwWalletAsync);
 
@@ -101,7 +104,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 	{
 		try
 		{
-			UIContext.QrCodeGenerator.Generate(Address.ToUpperInvariant())
+			_context.QrCodeGenerator.Generate(Address.ToUpperInvariant())
 									 .Subscribe(x => QrCode = x);
 		}
 		catch (Exception ex)

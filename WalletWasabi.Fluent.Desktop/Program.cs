@@ -121,8 +121,6 @@ public class Program
 							: "Renderer: Avalonia Software");
 
 						ThemeHelper.ApplyTheme(Global.UiConfig.DarkModeEnabled ? Theme.Dark : Theme.Light);
-
-						UIContext.InitializeForRuntime();
 					})
 					.StartWithClassicDesktopLifetime(args);
 		}

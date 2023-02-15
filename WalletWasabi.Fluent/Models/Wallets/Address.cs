@@ -32,9 +32,6 @@ public class Address : ReactiveObject, IAddress
 	public SmartLabel Label => HdPubKey.Label;
 	public PubKey PubKey => HdPubKey.PubKey;
 	public KeyPath FullKeyPath => HdPubKey.FullKeyPath;
-
-	public KeyState State => HdPubKey.KeyState;
-
 	public string Text => BitcoinAddress.ToString();
 	public IEnumerable<string> Labels => Label;
 
@@ -43,7 +40,7 @@ public class Address : ReactiveObject, IAddress
 	public void Hide()
 	{
 		Wallet.KeyManager.SetKeyState(KeyState.Locked, HdPubKey);
-		this.RaisePropertyChanged(nameof(State));
+		this.RaisePropertyChanged(nameof(IsUsed));
 	}
 
 	public void SetLabels(IEnumerable<string> labels)

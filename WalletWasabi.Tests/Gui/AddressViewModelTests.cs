@@ -1,29 +1,38 @@
 using System.Threading.Tasks;
+using Avalonia.Input.Platform;
+using FluentAssertions;
 using Moq;
+using WalletWasabi.Fluent;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.ViewModels.Dialogs;
+using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 using WalletWasabi.Tests.Gui.TestDoubles;
 using Xunit;
 
 namespace WalletWasabi.Tests.Gui;
 
-public class ReceiveAddressesViewModelTests
+public class AddressViewModelTests
 {
 	[Fact]
 	public void Hide_command_should_invoke_correct_method()
 	{
-		var address = (IAddress)new TestAddress("Add");
-
-		var onHide = Mock.Of<Func<IAddress, Task>>(func => func(address) == Task.CompletedTask);
-
+		var address = Mock.Of<IAddress>(MockBehavior.Loose);
+		var dialogService = CreateDialogReturning(true, DialogResultKind.Normal);
+		var context = new UIContext(Mock.Of<IQrCodeGenerator>(), Mock.Of<IClipboard>(), dialogService);
 		var sut = new AddressViewModel(
-			onHide,
 			_ => Task.CompletedTask,
 			_ => Task.CompletedTask,
+			context,
 			address);
 		
 		sut.HideAddressCommand.Execute(null);
 
-		Mock.Get(onHide).Verify(func => func(address), Times.Once);
+		Mock.Get(address).Verify(x => x.Hide(), Times.Once);
+	}
+
+	private static IDialogService CreateDialogReturning<T>(T result, DialogResultKind dialogResultKind)
+	{
+		return Mock.Of<IDialogService>(x => x.Show(It.IsAny<DialogViewModelBase<T>>()) == Task.FromResult(new DialogResult<T>(result, dialogResultKind)));
 	}
 }

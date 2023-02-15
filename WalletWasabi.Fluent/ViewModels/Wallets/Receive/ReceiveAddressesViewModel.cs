@@ -40,9 +40,9 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		// Labels		LabelsColumnView	Labels		210			-				-			false
 
 		Wallet.GetUnusedAddresses()
-			  .Transform(CreateAddressViewModel)
-			  .Bind(out _addresses)
-			  .Subscribe();
+			.Transform(CreateAddressViewModel)
+			.Bind(out _addresses)
+			.Subscribe();
 
 		Source = new FlatTreeDataGridSource<AddressViewModel>(_addresses)
 		{
@@ -104,38 +104,11 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 			width: new GridLength(210, GridUnitType.Pixel));
 	}
 
-	protected override void OnNavigatedTo(bool isInHistory, CompositeDisposable disposables)
-	{
-		base.OnNavigatedTo(isInHistory, disposables);
-	}
-
 	private AddressViewModel CreateAddressViewModel(IAddress address)
 	{
-		return new AddressViewModel(HideAddressAsync, NavigateToAddressEditAsync, NavigateToAddressAsync, address);
+		return new AddressViewModel(NavigateToAddressEditAsync, NavigateToAddressAsync, UIContext.Default, address);
 	}
-
-	private async Task HideAddressAsync(IAddress address)
-	{
-		var result = await NavigateDialogAsync(new ConfirmHideAddressViewModel(address));
-
-		if (result.Result == false)
-		{
-			return;
-		}
-
-		address.Hide();
-
-		if (Application.Current is { Clipboard: { } clipboard })
-		{
-			var isAddressCopied = await clipboard.GetTextAsync() == address.Text;
-
-			if (isAddressCopied)
-			{
-				await clipboard.ClearAsync();
-			}
-		}
-	}
-
+	
 	private async Task NavigateToAddressEditAsync(IAddress address)
 	{
 		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(Wallet, address), NavigationTarget.CompactDialogScreen);
@@ -147,6 +120,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		Navigate().To(new ReceiveAddressViewModel(Wallet, address, Services.UiConfig.Autocopy));
+		Navigate().To(new ReceiveAddressViewModel(Wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
 	}
 }

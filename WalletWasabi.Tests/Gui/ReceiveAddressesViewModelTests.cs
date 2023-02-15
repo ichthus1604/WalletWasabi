@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using Avalonia.Input.Platform;
 using DynamicData;
-using Moq;
+using FluentAssertions;
 using NBitcoin;
 using WalletWasabi.Blockchain.Transactions;
-using WalletWasabi.Fluent;
 using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
@@ -13,23 +11,26 @@ using Xunit;
 
 namespace WalletWasabi.Tests.Gui;
 
-public class ReceiveAddressViewModelTests
+public class ReceiveAddressesViewModelTests
 {
 	[Fact]
-	public void Copy_command_should_set_address_in_clipboard()
+	public void Hiding_address_should_remove_address_from_list()
 	{
-		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
-		var context = new UIContext(Mock.Of<IQrCodeGenerator>(MockBehavior.Loose), clipboard, Mock.Of<IDialogService>());
-		var sut = new ReceiveAddressViewModel(new ThisWallet(), new TestAddress("SomeAddress"), context, false);
-
-		sut.CopyAddressCommand.Execute(null);
-		
-		var mock = Mock.Get(clipboard);
-		mock.Verify(x => x.SetTextAsync("SomeAddress"));
+		var source = new SourceCache<IAddress, string>(s => s.Text);
+		var addr = new TestAddress("Address 1");
+		source.AddOrUpdate(addr);
+		var sut = new ReceiveAddressesViewModel(new SomeWallet(source.Connect()));
+		addr.Hide();
+		sut.Source.Items.Should().BeEmpty();
 	}
 
-	private class ThisWallet : IWalletModel
+	public class SomeWallet : IWalletModel
 	{
+		public SomeWallet(IObservable<IChangeSet<IAddress, string>> addresses)
+		{
+			Addresses = addresses;
+		}
+
 		public string Name { get; }
 		public IObservable<IChangeSet<TransactionSummary, uint256>> Transactions { get; }
 		public IAddress CreateReceiveAddress(IEnumerable<string> destinationLabels)
@@ -46,8 +47,7 @@ public class ReceiveAddressViewModelTests
 
 		public bool IsHardwareWallet()
 		{
-			return false;
+			throw new NotImplementedException();
 		}
 	}
-
 }
