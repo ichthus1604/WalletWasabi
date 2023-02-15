@@ -17,13 +17,13 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 {
 	private bool[,]? _qrCode;
 
-	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model)
+	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, bool isAutoCopyEnabled)
 	{
 		Model = model;
 		Address = model.Text;
 		Labels = model.Labels;
 		IsHardwareWallet = wallet.IsHardwareWallet();
-		IsAutoCopyEnabled = Services.UiConfig.Autocopy;
+		IsAutoCopyEnabled = isAutoCopyEnabled;
 
 		GenerateQrCode();
 

@@ -147,6 +147,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		Navigate().To(new ReceiveAddressViewModel(Wallet, address));
+		Navigate().To(new ReceiveAddressViewModel(Wallet, address, Services.UiConfig.Autocopy));
 	}
 }

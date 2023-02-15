@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DynamicData;
+using FluentAssertions;
 using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 using WalletWasabi.Tests.Gui.TestDoubles;
@@ -11,47 +12,41 @@ namespace WalletWasabi.Tests.Gui;
 public class ReceiveViewModelTests
 {
 	[Fact]
-	public async Task Empty_address_list()
+	public void Empty_address_list()
 	{
-		HasAnyUnusedAddresses(_ => { }, false);
+		HasUnusedAddresses(_ => { }).Should().BeFalse();
 	}
 
 	[Fact]
-	public async Task Used_address()
+	public void Used_address()
 	{
-		HasAnyUnusedAddresses(addresses => addresses.Used("addr"), false);
+		HasUnusedAddresses(addresses => addresses.WithUsed("addr")).Should().BeFalse();
 	}
 
 	[Fact]
-	public async Task Unused_address()
+	public void Unused_address()
 	{
-		HasAnyUnusedAddresses(
+		HasUnusedAddresses(addresses => { addresses.WithUnused("addr"); }).Should().BeTrue();
+	}
+
+	[Fact]
+	public void Unused_becomes_used()
+	{
+		HasUnusedAddresses(
 			addresses =>
 			{
-				addresses.Unused("addr");
-			},
-			true);
+				addresses.WithUnused("addr");
+				addresses.WithUsed("addr");
+			}).Should().BeFalse();
 	}
 
-	[Fact]
-	public async Task Unused_becomes_used()
-	{
-		HasAnyUnusedAddresses(
-			addresses =>
-			{
-				addresses.Unused("addr");
-				addresses.Used("addr");
-			},
-			false);
-	}
-
-	private static void HasAnyUnusedAddresses(Action<AddressConfiguration> configureAddresses, bool statuses)
+	private static bool HasUnusedAddresses(Action<AddressConfiguration> configureAddresses)
 	{
 		var addresses = new AddressConfiguration();
 		var receiveViewModel = new ReceiveViewModel(new TestWallet(addresses.Cache));
-		var expected = receiveViewModel.HasUnusedAddresses.SubscribeList();
+		var history = receiveViewModel.HasUnusedAddresses.SubscribeList();
 		configureAddresses(addresses);
-		Assert.Equal(statuses, expected.Last());
+		return history.Last();
 	}
 
 	private class AddressConfiguration
@@ -65,12 +60,12 @@ public class ReceiveViewModelTests
 
 		public IConnectableCache<IAddress, string> Cache => _cache;
 
-		public void Unused(string address)
+		public void WithUnused(string address)
 		{
 			_cache.AddOrUpdate(new TestAddress(address) { IsUsed = false });
 		}
 
-		public void Used(string address)
+		public void WithUsed(string address)
 		{
 			_cache.AddOrUpdate(new TestAddress(address) { IsUsed = true });	
 		}
