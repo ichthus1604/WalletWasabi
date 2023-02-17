@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
@@ -9,6 +8,10 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
 public class ReceiveAddressesDataGridSource
 {
+	// [Column]		[View]				[Header]	[Width]		[MinWidth]		[MaxWidth]	[CanUserSort]
+	// Actions		ActionsColumnView	-			90			-				-			false
+	// Address		AddressColumnView	Address		2*			-				-			true
+	// Labels		LabelsColumnView	Labels		210			-				-			false
 	public static FlatTreeDataGridSource<AddressViewModel> Create(ReadOnlyObservableCollection<AddressViewModel> addresses)
 	{
 		return new FlatTreeDataGridSource<AddressViewModel>(addresses)

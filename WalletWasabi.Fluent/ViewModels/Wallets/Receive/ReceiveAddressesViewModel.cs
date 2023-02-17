@@ -21,11 +21,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 		EnableBack = true;
 
-		// [Column]		[View]				[Header]	[Width]		[MinWidth]		[MaxWidth]	[CanUserSort]
-		// Actions		ActionsColumnView	-			90			-				-			false
-		// Address		AddressColumnView	Address		2*			-				-			true
-		// Labels		LabelsColumnView	Labels		210			-				-			false
-
 		Wallet.GetUnusedAddresses()
 			.Transform(CreateAddressViewModel)
 			.Bind(out _addresses)
