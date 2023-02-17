@@ -24,26 +24,26 @@ public class AddressViewModelTests
 			_ => Task.CompletedTask,
 			context,
 			address);
-		
+
 		sut.HideAddressCommand.Execute(null);
 
 		Mock.Get(address).Verify(x => x.Hide(), Times.Once);
-	}
-
-	private static IDialogService CreateDialogReturning<T>(T result, DialogResultKind dialogResultKind)
-	{
-		return Mock.Of<IDialogService>(x => x.Show(It.IsAny<DialogViewModelBase<T>>()) == Task.FromResult(new DialogResult<T>(result, dialogResultKind)));
 	}
 
 	[Fact]
 	public void Properties_are_mapped()
 	{
 		var testAddress = new TestAddress("ad");
-		var labels = new []{ "Label 1", "Label 2"};
+		var labels = new[] { "Label 1", "Label 2" };
 		testAddress.SetLabels(labels);
 		var sut = new AddressViewModel(_ => Task.CompletedTask, _ => Task.CompletedTask, new UIContext(null, null, null), testAddress);
 
 		sut.Address.Should().Be(testAddress.Text);
 		sut.Label.Should().BeEquivalentTo(labels);
+	}
+
+	private static IDialogService CreateDialogReturning<T>(T result, DialogResultKind dialogResultKind)
+	{
+		return Mock.Of<IDialogService>(x => x.Show(It.IsAny<DialogViewModelBase<T>>()) == Task.FromResult(new DialogResult<T>(result, dialogResultKind)));
 	}
 }
