@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 
-namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
+namespace WalletWasabi.Fluent.UIServices;
 
 public interface IDialogService
 {

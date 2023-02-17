@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 using WalletWasabi.Fluent.ViewModels;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Navigation;
-using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
-namespace WalletWasabi.Fluent;
+namespace WalletWasabi.Fluent.UIServices;
 
 public class DialogService : IDialogService
 {

@@ -1,4 +1,4 @@
-namespace WalletWasabi.Fluent.Models.Wallets;
+namespace WalletWasabi.Fluent.UIServices;
 
 public interface IQrCodeGenerator
 {

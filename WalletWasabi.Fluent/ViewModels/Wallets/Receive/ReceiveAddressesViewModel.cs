@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using DynamicData;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 
@@ -11,10 +12,12 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Addresses")]
 public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
+	private readonly UIContext _context;
 	private ReadOnlyObservableCollection<AddressViewModel> _addresses;
 
-	public ReceiveAddressesViewModel(IWalletModel wallet)
+	public ReceiveAddressesViewModel(IWalletModel wallet, UIContext context)
 	{
+		_context = context;
 		Wallet = wallet;
 
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
@@ -51,6 +54,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		Navigate().To(new ReceiveAddressViewModel(Wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
+		_context.NavigationService.Go(new ReceiveAddressViewModel(Wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
 	}
 }

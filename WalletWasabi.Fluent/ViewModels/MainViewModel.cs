@@ -9,6 +9,7 @@ using ReactiveUI;
 using WalletWasabi.Fluent.AppServices.Tor;
 using WalletWasabi.Fluent.Models;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.AddWallet;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Authorization;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
@@ -281,7 +282,7 @@ public partial class MainViewModel : ViewModelBase
 			{
 				// Temporary measure until the refactor is completed.
 				var uiWallet = new WalletModel(walletViewModel.Wallet);
-				return new ReceiveViewModel(uiWallet);
+				return new ReceiveViewModel(uiWallet, UIContext.Default);
 			}
 
 			return null;

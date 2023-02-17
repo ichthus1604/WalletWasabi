@@ -6,6 +6,7 @@ using NBitcoin;
 using WalletWasabi.Blockchain.Transactions;
 using WalletWasabi.Fluent;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 using WalletWasabi.Tests.Gui.TestDoubles;

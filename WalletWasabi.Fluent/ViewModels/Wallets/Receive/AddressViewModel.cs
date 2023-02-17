@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Avalonia;
 using ReactiveUI;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
 using AddressAction = System.Func<WalletWasabi.Fluent.Models.Wallets.IAddress, System.Threading.Tasks.Task>;
 

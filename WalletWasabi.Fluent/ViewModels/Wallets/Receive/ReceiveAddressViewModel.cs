@@ -8,6 +8,7 @@ using NBitcoin.Secp256k1;
 using ReactiveUI;
 using WalletWasabi.Extensions;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Logging;
 

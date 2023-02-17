@@ -2,7 +2,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Gma.QrCodeNet.Encoding;
 
-namespace WalletWasabi.Fluent.Models.Wallets;
+namespace WalletWasabi.Fluent.UIServices;
 
 public class QrGenerator : IQrCodeGenerator
 {

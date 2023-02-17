@@ -5,6 +5,7 @@ using DynamicData;
 using ReactiveUI;
 using WalletWasabi.Fluent.Extensions;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
 
@@ -22,10 +23,12 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 public partial class ReceiveViewModel : RoutableViewModel
 {
 	private readonly IWalletModel _wallet;
+	private readonly UIContext _context;
 
-	public ReceiveViewModel(IWalletModel wallet)
+	public ReceiveViewModel(IWalletModel wallet, UIContext context)
 	{
 		_wallet = wallet;
+		_context = context;
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
 
 		EnableBack = false;
@@ -65,6 +68,6 @@ public partial class ReceiveViewModel : RoutableViewModel
 
 	private void OnShowExistingAddresses()
 	{
-		Navigate().To(new ReceiveAddressesViewModel(_wallet));
+		_context.NavigationService.Go(new ReceiveAddressesViewModel(_wallet, _context));
 	}
 }

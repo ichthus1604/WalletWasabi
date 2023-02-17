@@ -4,6 +4,7 @@ using FluentAssertions;
 using Moq;
 using WalletWasabi.Fluent;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 using WalletWasabi.Tests.Gui.TestDoubles;
