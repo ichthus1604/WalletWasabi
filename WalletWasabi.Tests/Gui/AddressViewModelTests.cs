@@ -4,7 +4,6 @@ using FluentAssertions;
 using Moq;
 using WalletWasabi.Fluent;
 using WalletWasabi.Fluent.Models.Wallets;
-using WalletWasabi.Fluent.ViewModels.Dialogs;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 using WalletWasabi.Tests.Gui.TestDoubles;
@@ -34,5 +33,17 @@ public class AddressViewModelTests
 	private static IDialogService CreateDialogReturning<T>(T result, DialogResultKind dialogResultKind)
 	{
 		return Mock.Of<IDialogService>(x => x.Show(It.IsAny<DialogViewModelBase<T>>()) == Task.FromResult(new DialogResult<T>(result, dialogResultKind)));
+	}
+
+	[Fact]
+	public void Properties_are_mapped()
+	{
+		var testAddress = new TestAddress("ad");
+		var labels = new []{ "Label 1", "Label 2"};
+		testAddress.SetLabels(labels);
+		var sut = new AddressViewModel(_ => Task.CompletedTask, _ => Task.CompletedTask, new UIContext(null, null, null), testAddress);
+
+		sut.Address.Should().Be(testAddress.Text);
+		sut.Label.Should().BeEquivalentTo(labels);
 	}
 }

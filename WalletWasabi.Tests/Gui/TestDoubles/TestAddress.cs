@@ -15,7 +15,7 @@ public class TestAddress : ReactiveObject, IAddress
 	}
 
 	public string Text { get; }
-	public IEnumerable<string> Labels { get; }
+	public IEnumerable<string> Labels { get; private set; }
 
 	public bool IsUsed
 	{
@@ -30,6 +30,7 @@ public class TestAddress : ReactiveObject, IAddress
 
 	public void SetLabels(IEnumerable<string> labels)
 	{
+		Labels = labels;
 	}
 
 	public Task ShowOnHwWalletAsync()
