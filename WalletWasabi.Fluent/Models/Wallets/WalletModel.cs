@@ -41,7 +41,7 @@ internal class WalletModel : IWalletModel
 
 	public IObservable<IChangeSet<IAddress, string>> Addresses { get; }
 
-	public IObservable<EventPattern<ProcessedResult?>> RelevantTransactionProcessed { get; }
+	private IObservable<EventPattern<ProcessedResult?>> RelevantTransactionProcessed { get; }
 
 	public string Name => _wallet.WalletName;
 
