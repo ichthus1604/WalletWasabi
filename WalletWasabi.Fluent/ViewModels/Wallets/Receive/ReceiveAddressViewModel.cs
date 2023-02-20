@@ -4,7 +4,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using NBitcoin.Secp256k1;
 using ReactiveUI;
 using WalletWasabi.Extensions;
 using WalletWasabi.Fluent.Models.Wallets;
@@ -27,7 +26,6 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 		Address = model.Text;
 		Labels = model.Labels;
 		IsHardwareWallet = wallet.IsHardwareWallet();
-		IsAutoCopyEnabled = isAutoCopyEnabled;
 
 		GenerateQrCode();
 
@@ -46,6 +44,11 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 			.Subscribe(ex => Logger.LogError(ex));
 
 		NextCommand = CancelCommand;
+
+		if (isAutoCopyEnabled)
+		{
+			CopyAddressCommand.Execute(null);
+		}
 	}
 
 	private IAddress Model { get; }
@@ -63,8 +66,6 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 	public IEnumerable<string> Labels { get; }
 
 	public bool IsHardwareWallet { get; }
-
-	public bool IsAutoCopyEnabled { get; }
 
 	public bool[,]? QrCode
 	{

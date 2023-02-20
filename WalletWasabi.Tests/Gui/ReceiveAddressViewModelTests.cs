@@ -29,6 +29,16 @@ public class ReceiveAddressViewModelTests
 		mock.Verify(x => x.SetTextAsync("SomeAddress"));
 	}
 
+	[Fact]
+	public void Auto_copy_enabled_should_copy_to_clipboard()
+	{
+		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
+		var context = new UIContext(Mock.Of<IQrCodeGenerator>(MockBehavior.Loose), clipboard, Mock.Of<IDialogService>(), null);
+		new ReceiveAddressViewModel(new ThisWallet(), new TestAddress("SomeAddress"), context, true);
+		var mock = Mock.Get(clipboard);
+		mock.Verify(x => x.SetTextAsync("SomeAddress"));
+	}
+
 	private class ThisWallet : IWalletModel
 	{
 		public string Name { get; }
