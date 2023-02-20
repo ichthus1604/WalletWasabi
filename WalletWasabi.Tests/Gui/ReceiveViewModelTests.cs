@@ -2,6 +2,7 @@ using System.Linq;
 using DynamicData;
 using FluentAssertions;
 using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 using WalletWasabi.Tests.Gui.TestDoubles;
 using Xunit;
@@ -42,7 +43,7 @@ public class ReceiveViewModelTests
 	private static bool HasUnusedAddresses(Action<AddressConfiguration> configureAddresses)
 	{
 		var addresses = new AddressConfiguration();
-		var receiveViewModel = new ReceiveViewModel(new TestWallet(addresses.Cache));
+		var receiveViewModel = new ReceiveViewModel(new TestWallet(addresses.Cache), TestingUIContext.NullUIContext);
 		var history = receiveViewModel.HasUnusedAddresses.SubscribeList();
 		configureAddresses(addresses);
 		return history.Last();

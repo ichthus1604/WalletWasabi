@@ -18,9 +18,9 @@ public class ReceiveAddressesViewModelTests
 	{
 		var addr = new TestAddress("Address 1");
 		var source = new SourceCache<IAddress, string>(s => s.Text);
-		var sut = new ReceiveAddressesViewModel(new SomeWallet(source.Connect()));
+		var sut = CreateSut(source);
 		source.AddOrUpdate(addr);
-		
+
 		addr.Hide();
 
 		sut.Source.Items.Should().BeEmpty();
@@ -31,7 +31,7 @@ public class ReceiveAddressesViewModelTests
 	{
 		var addr = new TestAddress("Address 1");
 		var source = new SourceCache<IAddress, string>(s => s.Text);
-		var sut = new ReceiveAddressesViewModel(new SomeWallet(source.Connect()));
+		var sut = CreateSut(source);
 		source.AddOrUpdate(addr);
 		sut.Source.Items.Should().HaveCount(1);
 	}
@@ -43,10 +43,15 @@ public class ReceiveAddressesViewModelTests
 		var addr2 = new TestAddress("Address 1");
 
 		var source = new SourceCache<IAddress, string>(s => s.Text);
-		var sut = new ReceiveAddressesViewModel(new SomeWallet(source.Connect()));
+		var sut = CreateSut(source);
 		source.AddOrUpdate(addr1);
 		source.AddOrUpdate(addr2);
 		sut.Source.Items.Should().HaveCount(1);
+	}
+
+	private static ReceiveAddressesViewModel CreateSut(SourceCache<IAddress, string> source)
+	{
+		return new ReceiveAddressesViewModel(new SomeWallet(source.Connect()), TestingUIContext.NullUIContext);
 	}
 
 	private class SomeWallet : IWalletModel
@@ -58,6 +63,7 @@ public class ReceiveAddressesViewModelTests
 
 		public string Name { get; }
 		public IObservable<IChangeSet<TransactionSummary, uint256>> Transactions { get; }
+
 		public IAddress CreateReceiveAddress(IEnumerable<string> destinationLabels)
 		{
 			throw new NotImplementedException();
@@ -65,6 +71,7 @@ public class ReceiveAddressesViewModelTests
 
 		public IObservable<Money> Balance { get; }
 		public IObservable<IChangeSet<IAddress, string>> Addresses { get; }
+
 		public IEnumerable<(string Label, int Score)> GetMostUsedLabels(Intent intent)
 		{
 			throw new NotImplementedException();
@@ -73,17 +80,6 @@ public class ReceiveAddressesViewModelTests
 		public bool IsHardwareWallet()
 		{
 			throw new NotImplementedException();
-		}
-	}
-
-	private class WalletBuilder
-	{
-		private IObservable<IChangeSet<IAddress, string>> _addressChanges;
-
-		public WalletBuilder WithAddresses(IObservable<IChangeSet<IAddress, string>> addressChanges)
-		{
-			_addressChanges = addressChanges;
-			return this;
 		}
 	}
 }
