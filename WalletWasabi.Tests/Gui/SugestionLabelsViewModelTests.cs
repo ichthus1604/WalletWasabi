@@ -27,7 +27,6 @@ public class SuggestionLabelsViewModelTests
 				("Label 4", 5),
 				("Label 5", 4)
 			});
-
 		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, maxSuggestions);
 
 		Assert.Equal(expected, sut.TopSuggestions.Count);

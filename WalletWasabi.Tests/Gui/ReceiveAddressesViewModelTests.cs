@@ -32,7 +32,9 @@ public class ReceiveAddressesViewModelTests
 		var addr = new TestAddress("Address 1");
 		var source = new SourceCache<IAddress, string>(s => s.Text);
 		var sut = CreateSut(source);
+
 		source.AddOrUpdate(addr);
+
 		sut.Source.Items.Should().HaveCount(1);
 	}
 
@@ -44,19 +46,21 @@ public class ReceiveAddressesViewModelTests
 
 		var source = new SourceCache<IAddress, string>(s => s.Text);
 		var sut = CreateSut(source);
+
 		source.AddOrUpdate(addr1);
 		source.AddOrUpdate(addr2);
+
 		sut.Source.Items.Should().HaveCount(1);
 	}
 
 	private static ReceiveAddressesViewModel CreateSut(SourceCache<IAddress, string> source)
 	{
-		return new ReceiveAddressesViewModel(new SomeWallet(source.Connect()), TestingUIContext.NullUIContext);
+		return new ReceiveAddressesViewModel(new TestWallet(source.Connect()), TestingUIContext.NullUIContext);
 	}
 
-	private class SomeWallet : IWalletModel
+	private class TestWallet : IWalletModel
 	{
-		public SomeWallet(IObservable<IChangeSet<IAddress, string>> addresses)
+		public TestWallet(IObservable<IChangeSet<IAddress, string>> addresses)
 		{
 			Addresses = addresses;
 		}

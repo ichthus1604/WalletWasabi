@@ -21,7 +21,7 @@ public class ReceiveAddressViewModelTests
 	{
 		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
 		var context = CreateUIContext(clipboard);
-		var sut = new ReceiveAddressViewModel(new ThisWallet(), new TestAddress("SomeAddress"), context, false);
+		var sut = new ReceiveAddressViewModel(new TestWallet(), new TestAddress("SomeAddress"), context, false);
 
 		sut.CopyAddressCommand.Execute(null);
 		
@@ -34,7 +34,7 @@ public class ReceiveAddressViewModelTests
 	{
 		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
 		var context = CreateUIContext(clipboard);
-		new ReceiveAddressViewModel(new ThisWallet(), new TestAddress("SomeAddress"), context, true);
+		new ReceiveAddressViewModel(new TestWallet(), new TestAddress("SomeAddress"), context, true);
 		var mock = Mock.Get(clipboard);
 		mock.Verify(x => x.SetTextAsync("SomeAddress"));
 	}
@@ -44,7 +44,7 @@ public class ReceiveAddressViewModelTests
 		return new UIContext(Mock.Of<IQrCodeGenerator>(x => x.Generate(It.IsAny<string>()) == Observable.Return(new bool[0,0])), clipboard, Mock.Of<IDialogService>(), null);
 	}
 
-	private class ThisWallet : IWalletModel
+	private class TestWallet : IWalletModel
 	{
 		public string Name { get; }
 		public IObservable<IChangeSet<TransactionSummary, uint256>> Transactions { get; }
@@ -65,5 +65,4 @@ public class ReceiveAddressViewModelTests
 			return false;
 		}
 	}
-
 }
