@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -17,7 +16,7 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
 	private readonly UIContext _context;
-	private bool[,]? _qrCode;
+	private readonly ObservableAsPropertyHelper<bool[,]> _qrCode;
 
 	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, UIContext context, bool isAutoCopyEnabled)
 	{
@@ -26,8 +25,6 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 		Address = model.Text;
 		Labels = model.Labels;
 		IsHardwareWallet = wallet.IsHardwareWallet();
-
-		GenerateQrCode();
 
 		SetupCancel(enableCancel: false, enableCancelOnEscape: true, enableCancelOnPressed: true);
 
@@ -45,11 +42,20 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		NextCommand = CancelCommand;
 
+		GenerateQrCodeCommand = ReactiveCommand.CreateFromObservable(() => context.QrCodeGenerator.Generate(model.Text));
+		_qrCode = GenerateQrCodeCommand.ToProperty(this, nameof(QrCode));
+
 		if (isAutoCopyEnabled)
 		{
 			CopyAddressCommand.Execute(null);
 		}
+
+		GenerateQrCodeCommand
+			.Execute()
+			.Subscribe();
 	}
+
+	public ReactiveCommand<Unit, bool[,]> GenerateQrCodeCommand { get; }
 
 	private IAddress Model { get; }
 
@@ -67,11 +73,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 	public bool IsHardwareWallet { get; }
 
-	public bool[,]? QrCode
-	{
-		get => _qrCode;
-		set => this.RaiseAndSetIfChanged(ref _qrCode, value);
-	}
+	public bool[,]? QrCode => _qrCode.Value;
 
 	private async Task ShowOnHwWalletAsync()
 	{
@@ -90,28 +92,6 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 		if (QrCodeCommand is { } cmd)
 		{
 			await cmd.Execute(Address);
-		}
-	}
-
-	protected override void OnNavigatedTo(bool isInHistory, CompositeDisposable disposables)
-	{
-		base.OnNavigatedTo(isInHistory, disposables);
-
-		this.WhenAnyValue(x => x.Model.IsUsed)
-			.Where(x => x)
-			.Subscribe(_ => Navigate().Back());
-	}
-
-	private void GenerateQrCode()
-	{
-		try
-		{
-			_context.QrCodeGenerator.Generate(Address.ToUpperInvariant())
-									 .Subscribe(x => QrCode = x);
-		}
-		catch (Exception ex)
-		{
-			Logger.LogError(ex);
 		}
 	}
 }
