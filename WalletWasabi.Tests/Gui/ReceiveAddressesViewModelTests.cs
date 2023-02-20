@@ -14,6 +14,18 @@ namespace WalletWasabi.Tests.Gui;
 public class ReceiveAddressesViewModelTests
 {
 	[Fact]
+	public void Adding_address_increments_source_item_count()
+	{
+		var addr = new TestAddress("Address 1");
+		var source = new SourceCache<IAddress, string>(s => s.Text);
+		var sut = CreateSut(source);
+
+		source.AddOrUpdate(addr);
+
+		sut.Source.Items.Should().HaveCount(1);
+	}
+
+	[Fact]
 	public void Hiding_address_should_remove_address_from_list()
 	{
 		var addr = new TestAddress("Address 1");
@@ -27,19 +39,7 @@ public class ReceiveAddressesViewModelTests
 	}
 
 	[Fact]
-	public void Souce_is_synced_when_item_added()
-	{
-		var addr = new TestAddress("Address 1");
-		var source = new SourceCache<IAddress, string>(s => s.Text);
-		var sut = CreateSut(source);
-
-		source.AddOrUpdate(addr);
-
-		sut.Source.Items.Should().HaveCount(1);
-	}
-
-	[Fact]
-	public void Same_item_is_updated()
+	public void Adding_different_instances_of_same_address_does_increment_source_item_count()
 	{
 		var addr1 = new TestAddress("Address 1");
 		var addr2 = new TestAddress("Address 1");

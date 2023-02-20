@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -47,8 +48,8 @@ public class ReceiveAddressesDataGridSource
 			{
 				CanUserResizeColumn = false,
 				CanUserSortColumn = true,
-				CompareAscending = AddressViewModel.SortAscending(x => x.Address),
-				CompareDescending = AddressViewModel.SortDescending(x => x.Address)
+				CompareAscending = SortAscending(x => x.AddressText),
+				CompareDescending = SortDescending(x => x.AddressText)
 			},
 			width: new GridLength(2, GridUnitType.Star));
 	}
@@ -62,9 +63,55 @@ public class ReceiveAddressesDataGridSource
 			{
 				CanUserResizeColumn = false,
 				CanUserSortColumn = true,
-				CompareAscending = AddressViewModel.SortAscending(x => x.Label),
-				CompareDescending = AddressViewModel.SortDescending(x => x.Label)
+				CompareAscending = SortAscending(x => x.Label),
+				CompareDescending = SortDescending(x => x.Label)
 			},
 			width: new GridLength(210, GridUnitType.Pixel));
+	}
+
+	public static Comparison<AddressViewModel?> SortAscending<T>(Func<AddressViewModel, T> selector)
+	{
+		return (x, y) =>
+		{
+			if (x is null && y is null)
+			{
+				return 0;
+			}
+			else if (x is null)
+			{
+				return -1;
+			}
+			else if (y is null)
+			{
+				return 1;
+			}
+			else
+			{
+				return Comparer<T>.Default.Compare(selector(x), selector(y));
+			}
+		};
+	}
+
+	public static Comparison<AddressViewModel?> SortDescending<T>(Func<AddressViewModel, T> selector)
+	{
+		return (x, y) =>
+		{
+			if (x is null && y is null)
+			{
+				return 0;
+			}
+			else if (x is null)
+			{
+				return 1;
+			}
+			else if (y is null)
+			{
+				return -1;
+			}
+			else
+			{
+				return Comparer<T>.Default.Compare(selector(y), selector(x));
+			}
+		};
 	}
 }

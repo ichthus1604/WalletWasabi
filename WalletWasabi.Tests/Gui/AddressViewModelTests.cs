@@ -38,7 +38,7 @@ public class AddressViewModelTests
 		testAddress.SetLabels(labels);
 		var sut = new AddressViewModel(_ => Task.CompletedTask, _ => Task.CompletedTask, TestingUIContext.NullUIContext, testAddress);
 
-		sut.Address.Should().Be(testAddress.Text);
+		sut.AddressText.Should().Be(testAddress.Text);
 		sut.Label.Should().BeEquivalentTo(labels);
 	}
 

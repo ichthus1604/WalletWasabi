@@ -15,12 +15,10 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Address")]
 public partial class ReceiveAddressViewModel : RoutableViewModel
 {
-	private readonly UIContext _context;
 	private readonly ObservableAsPropertyHelper<bool[,]> _qrCode;
 
 	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, UIContext context, bool isAutoCopyEnabled)
 	{
-		_context = context;
 		Model = model;
 		Address = model.Text;
 		Labels = model.Labels;
