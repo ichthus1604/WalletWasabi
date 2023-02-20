@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using Avalonia.Input.Platform;
 using DynamicData;
 using Moq;
 using NBitcoin;
 using WalletWasabi.Blockchain.Transactions;
-using WalletWasabi.Fluent;
 using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Wallets.Labels;
@@ -20,7 +20,7 @@ public class ReceiveAddressViewModelTests
 	public void Copy_command_should_set_address_in_clipboard()
 	{
 		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
-		var context = new UIContext(Mock.Of<IQrCodeGenerator>(MockBehavior.Loose), clipboard, Mock.Of<IDialogService>(), null);
+		var context = CreateUIContext(clipboard);
 		var sut = new ReceiveAddressViewModel(new ThisWallet(), new TestAddress("SomeAddress"), context, false);
 
 		sut.CopyAddressCommand.Execute(null);
@@ -33,10 +33,15 @@ public class ReceiveAddressViewModelTests
 	public void Auto_copy_enabled_should_copy_to_clipboard()
 	{
 		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
-		var context = new UIContext(Mock.Of<IQrCodeGenerator>(MockBehavior.Loose), clipboard, Mock.Of<IDialogService>(), null);
+		var context = CreateUIContext(clipboard);
 		new ReceiveAddressViewModel(new ThisWallet(), new TestAddress("SomeAddress"), context, true);
 		var mock = Mock.Get(clipboard);
 		mock.Verify(x => x.SetTextAsync("SomeAddress"));
+	}
+
+	private static UIContext CreateUIContext(IClipboard clipboard)
+	{
+		return new UIContext(Mock.Of<IQrCodeGenerator>(x => x.Generate(It.IsAny<string>()) == Observable.Return(new bool[0,0])), clipboard, Mock.Of<IDialogService>(), null);
 	}
 
 	private class ThisWallet : IWalletModel
