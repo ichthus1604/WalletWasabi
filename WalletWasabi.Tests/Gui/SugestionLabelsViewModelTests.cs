@@ -16,7 +16,7 @@ public class SuggestionLabelsViewModelTests
 	[InlineData(3, 3)]
 	[InlineData(100, 5)]
 	[Theory]
-	public void Top_suggestions_should_match(int maxSuggestions, int expected)
+	public void Given_max_top_suggestions_the_suggestion_count_should_match(int maxSuggestions, int expectedSuggestionsCount)
 	{
 		var wallet = new TestWallet(
 			new List<(string Label, int Score)>
@@ -29,11 +29,11 @@ public class SuggestionLabelsViewModelTests
 			});
 		var sut = new SuggestionLabelsViewModel(wallet, Intent.Send, maxSuggestions);
 
-		Assert.Equal(expected, sut.TopSuggestions.Count);
+		sut.TopSuggestions.Count.Should().Be(expectedSuggestionsCount);
 	}
 	
 	[Fact]
-	public void Suggestions_should_be_in_correct_order()
+	public void Suggestions_should_be_in_correct_order_according_to_score()
 	{
 		var mostUsedLabels = new List<(string Label, int Score)>
 		{
