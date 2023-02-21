@@ -7,13 +7,13 @@ using WalletWasabi.Fluent.Views.Wallets.Receive.Columns;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
-public class ReceiveAddressesDataGridSource
+public static class ReceiveAddressesDataGridSource
 {
 	// [Column]		[View]				[Header]	[Width]		[MinWidth]		[MaxWidth]	[CanUserSort]
 	// Actions		ActionsColumnView	-			90			-				-			false
 	// Address		AddressColumnView	Address		2*			-				-			true
 	// Labels		LabelsColumnView	Labels		210			-				-			false
-	public static FlatTreeDataGridSource<AddressViewModel> Create(ReadOnlyObservableCollection<AddressViewModel> addresses)
+	public static FlatTreeDataGridSource<AddressViewModel> Create(IEnumerable<AddressViewModel> addresses)
 	{
 		return new FlatTreeDataGridSource<AddressViewModel>(addresses)
 		{
@@ -26,7 +26,30 @@ public class ReceiveAddressesDataGridSource
 		};
 	}
 
-	public static IColumn<AddressViewModel> ActionsColumn()
+	private static Comparison<AddressViewModel?> SortDescending<T>(Func<AddressViewModel, T> selector)
+	{
+		return (x, y) =>
+		{
+			if (x is null && y is null)
+			{
+				return 0;
+			}
+
+			if (x is null)
+			{
+				return 1;
+			}
+
+			if (y is null)
+			{
+				return -1;
+			}
+
+			return Comparer<T>.Default.Compare(selector(y), selector(x));
+		};
+	}
+
+	private static IColumn<AddressViewModel> ActionsColumn()
 	{
 		return new TemplateColumn<AddressViewModel>(
 			null,
@@ -39,7 +62,7 @@ public class ReceiveAddressesDataGridSource
 			width: new GridLength(90, GridUnitType.Pixel));
 	}
 
-	public static IColumn<AddressViewModel> AddressColumn()
+	private static IColumn<AddressViewModel> AddressColumn()
 	{
 		return new TemplateColumn<AddressViewModel>(
 			"Address",
@@ -54,7 +77,7 @@ public class ReceiveAddressesDataGridSource
 			width: new GridLength(2, GridUnitType.Star));
 	}
 
-	public static IColumn<AddressViewModel> LabelsColumn()
+	private static IColumn<AddressViewModel> LabelsColumn()
 	{
 		return new TemplateColumn<AddressViewModel>(
 			"Labels",
@@ -69,7 +92,7 @@ public class ReceiveAddressesDataGridSource
 			width: new GridLength(210, GridUnitType.Pixel));
 	}
 
-	public static Comparison<AddressViewModel?> SortAscending<T>(Func<AddressViewModel, T> selector)
+	private static Comparison<AddressViewModel?> SortAscending<T>(Func<AddressViewModel, T> selector)
 	{
 		return (x, y) =>
 		{
@@ -77,41 +100,18 @@ public class ReceiveAddressesDataGridSource
 			{
 				return 0;
 			}
-			else if (x is null)
-			{
-				return -1;
-			}
-			else if (y is null)
-			{
-				return 1;
-			}
-			else
-			{
-				return Comparer<T>.Default.Compare(selector(x), selector(y));
-			}
-		};
-	}
 
-	public static Comparison<AddressViewModel?> SortDescending<T>(Func<AddressViewModel, T> selector)
-	{
-		return (x, y) =>
-		{
-			if (x is null && y is null)
-			{
-				return 0;
-			}
-			else if (x is null)
-			{
-				return 1;
-			}
-			else if (y is null)
+			if (x is null)
 			{
 				return -1;
 			}
-			else
+
+			if (y is null)
 			{
-				return Comparer<T>.Default.Compare(selector(y), selector(x));
+				return 1;
 			}
+
+			return Comparer<T>.Default.Compare(selector(x), selector(y));
 		};
 	}
 }

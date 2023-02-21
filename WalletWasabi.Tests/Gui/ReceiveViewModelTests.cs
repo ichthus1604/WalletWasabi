@@ -47,7 +47,7 @@ public class ReceiveViewModelTests
 	private static bool HasUnusedAddresses(Action<AddressConfiguration> configureAddresses)
 	{
 		var addresses = new AddressConfiguration();
-		var receiveViewModel = new ReceiveViewModel(new TestWallet(addresses.Cache), TestingUIContext.NullUIContext);
+		var receiveViewModel = new ReceiveViewModel(new TestWallet(addresses.Cache), Testing.NullUIContext);
 		var history = receiveViewModel.HasUnusedAddresses.SubscribeList();
 		configureAddresses(addresses);
 		return history.Last();

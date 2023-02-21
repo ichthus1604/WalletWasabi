@@ -1,8 +1,8 @@
 using WalletWasabi.Fluent.UIServices;
 
-namespace WalletWasabi.Tests.Gui;
+namespace WalletWasabi.Tests.Gui.TestDoubles;
 
-public static class TestingUIContext
+public static class Testing
 {
 	public static UIContext NullUIContext => new(null, null, null, null);
 }

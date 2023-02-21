@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using DynamicData;
@@ -19,16 +21,38 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		_wallet = wallet;
 		_context = context;
 
+		Source = CreateSourceBuggy();
+
+		Source.RowSelection!.SingleSelect = true;
+		EnableBack = true;
+		SetupCancel(true, true, true);
+	}
+
+	// This is the wrong take. It will only get the items the first time. It won't refresh
+	// afterwards
+	private FlatTreeDataGridSource<AddressViewModel> CreateSourceBuggy()
+	{
+		var source = _wallet
+			.UnusedAddresses()
+			.ToCollection()
+			.Take(1)
+			.Wait()
+			.Select(CreateAddressViewModel);
+
+		return new FlatTreeDataGridSource<AddressViewModel>(source);
+	}
+
+	// This is the fixed code
+	private FlatTreeDataGridSource<AddressViewModel> CreateSource()
+	{
 		_wallet
 			.UnusedAddresses()
 			.Transform(CreateAddressViewModel)
 			.Bind(out var addresses)
 			.Subscribe();
 
-		Source = ReceiveAddressesDataGridSource.Create(addresses);
-		Source.RowSelection!.SingleSelect = true;
-		EnableBack = true;
-		SetupCancel(true, true, true);
+		var source = ReceiveAddressesDataGridSource.Create(addresses);
+		return source;
 	}
 
 	public FlatTreeDataGridSource<AddressViewModel> Source { get; }
