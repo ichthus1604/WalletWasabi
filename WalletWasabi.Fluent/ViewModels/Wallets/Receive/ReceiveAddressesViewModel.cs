@@ -11,24 +11,25 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Addresses")]
 public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
+	private readonly UIContext _context;
+	private readonly IWalletModel _wallet;
+
 	public ReceiveAddressesViewModel(IWalletModel wallet, UIContext context)
 	{
-		Wallet = wallet;
-		Context = context;
+		_wallet = wallet;
+		_context = context;
 
-		Wallet
+		_wallet
 			.UnusedAddresses()
 			.Transform(CreateAddressViewModel)
 			.Bind(out var addresses)
 			.Subscribe();
+
 		Source = ReceiveAddressesDataGridSource.Create(addresses);
 		Source.RowSelection!.SingleSelect = true;
 		EnableBack = true;
 		SetupCancel(true, true, true);
 	}
-
-	private IWalletModel Wallet { get; }
-	private UIContext Context { get; }
 
 	public FlatTreeDataGridSource<AddressViewModel> Source { get; }
 
@@ -39,7 +40,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressEditAsync(IAddress address)
 	{
-		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(Wallet, address), NavigationTarget.CompactDialogScreen);
+		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(_wallet, address), NavigationTarget.CompactDialogScreen);
 		if (result is { Kind: DialogResultKind.Normal, Result: { } })
 		{
 			address.SetLabels(result.Result);
@@ -48,6 +49,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		Context.NavigationService.Go(new ReceiveAddressViewModel(Wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
+		_context.NavigationService.Go(new ReceiveAddressViewModel(_wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
 	}
 }
