@@ -21,7 +21,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		_wallet = wallet;
 		_context = context;
 
-		Source = CreateSourceBuggy();
+		Source = CreateSource();
 
 		Source.RowSelection!.SingleSelect = true;
 		EnableBack = true;

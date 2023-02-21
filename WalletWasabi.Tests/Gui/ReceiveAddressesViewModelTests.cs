@@ -44,16 +44,16 @@ public class ReceiveAddressesViewModelTests
 		sut.Source.Items.Should().HaveCount(1);
 	}
 
-	// Demo:
+	// Demo 1:
 	// We create this test to reproduce a new issue.
 	[Fact]
-	public void Hiding_address_should_remove_address_from_list()
+	public void When_address_becomes_used_its_removed_from_source()
 	{
 		var firstAddress = new TestAddress("addr1");
 		var addressList = AddressList(firstAddress, new TestAddress("addr2"), new TestAddress("addr3"));
 		var sut = SutWithAddresses(addressList);
 
-		firstAddress.Hide();
+		firstAddress.IsUsed = true;
 
 		sut.Source.Items.Should().HaveCount(2);
 	}
