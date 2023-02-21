@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using DynamicData;
 using ReactiveUI;
 using WalletWasabi.Extensions;
 using WalletWasabi.Fluent.Models.Wallets;
@@ -50,6 +52,14 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		GenerateQrCodeCommand
 			.Execute()
+			.Subscribe();
+
+		// IMPORTANT:
+		// This code is needed to fix go back when address becomes used
+		wallet.Addresses
+			.Watch(model.Text)
+			.Where(change => change.Current.IsUsed)
+			.Do(_ => context.NavigationService.GoBack())
 			.Subscribe();
 	}
 

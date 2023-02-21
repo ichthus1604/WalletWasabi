@@ -8,4 +8,9 @@ public class NavigationService : INavigationService
 	{
 		NavigationState.Instance.DialogScreenNavigation.To(to);
 	}
+
+	public void GoBack()
+	{
+		NavigationState.Instance.DialogScreenNavigation.Back();
+	}
 }
