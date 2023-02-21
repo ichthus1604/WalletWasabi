@@ -1,6 +1,6 @@
 using WalletWasabi.Fluent.UIServices;
 
-namespace WalletWasabi.Tests.Gui.TestDoubles;
+namespace WalletWasabi.Tests.Gui;
 
 public static class Testing
 {
