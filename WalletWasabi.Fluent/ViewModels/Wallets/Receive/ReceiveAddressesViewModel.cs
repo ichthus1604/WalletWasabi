@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using DynamicData;
@@ -12,29 +11,24 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Addresses")]
 public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
-	private readonly UIContext _context;
-	private ReadOnlyObservableCollection<AddressViewModel> _addresses;
-
 	public ReceiveAddressesViewModel(IWalletModel wallet, UIContext context)
 	{
-		_context = context;
 		Wallet = wallet;
+		Context = context;
 
-		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
-
-		EnableBack = true;
-
-		Wallet.GetUnusedAddresses()
+		Wallet
+			.UnusedAddresses()
 			.Transform(CreateAddressViewModel)
-			.Bind(out _addresses)
+			.Bind(out var addresses)
 			.Subscribe();
-
-		Source = ReceiveAddressesDataGridSource.Create(_addresses);
-
+		Source = ReceiveAddressesDataGridSource.Create(addresses);
 		Source.RowSelection!.SingleSelect = true;
+		EnableBack = true;
+		SetupCancel(true, true, true);
 	}
 
 	private IWalletModel Wallet { get; }
+	private UIContext Context { get; }
 
 	public FlatTreeDataGridSource<AddressViewModel> Source { get; }
 
@@ -42,7 +36,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	{
 		return new AddressViewModel(NavigateToAddressEditAsync, NavigateToAddressAsync, UIContext.Default, address);
 	}
-	
+
 	private async Task NavigateToAddressEditAsync(IAddress address)
 	{
 		var result = await NavigateDialogAsync(new AddressLabelEditViewModel(Wallet, address), NavigationTarget.CompactDialogScreen);
@@ -54,6 +48,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		_context.NavigationService.Go(new ReceiveAddressViewModel(Wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
+		Context.NavigationService.Go(new ReceiveAddressViewModel(Wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
 	}
 }

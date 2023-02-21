@@ -47,7 +47,7 @@ public partial class ReceiveViewModel : RoutableViewModel
 
 		HasUnusedAddresses =
 			_wallet
-				.GetUnusedAddresses()
+				.UnusedAddresses()
 				.ToCollection()
 				.Select(x => x.Any())
 				.StartWith(false);
