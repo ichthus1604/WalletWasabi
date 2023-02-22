@@ -8,8 +8,6 @@ using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
 
-//using AddressAction = System.Func<WalletWasabi.Fluent.Models.Wallets.IAddress, System.Threading.Tasks.Task>;
-
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
 public delegate Task AddressAction(IAddress address);

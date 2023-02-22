@@ -134,7 +134,7 @@ partial class {{className}}
 
 		if (invalidReference != null)
 		{
-			var msg = $"UIContext cannot be referenced in a ViewModel's constructor because it hasn't been initialized yet when constructor runs.\r\nMove your code to OnNavigatedTo().";
+			var msg = $"UIContext cannot be referenced in a ViewModel's constructor because it hasn't been initialized yet when constructor runs. Move this code to OnNavigatedTo().";
 			var location = invalidReference.GetLocation();
 			var diagnostic = Diagnostic.Create(new DiagnosticDescriptor("WW501", msg, msg, "UI", DiagnosticSeverity.Error, true), location);
 			context.ReportDiagnostic(diagnostic);
