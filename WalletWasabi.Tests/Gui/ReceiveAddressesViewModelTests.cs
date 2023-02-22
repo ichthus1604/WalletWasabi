@@ -44,8 +44,6 @@ public class ReceiveAddressesViewModelTests
 		sut.Source.Items.Should().HaveCount(1);
 	}
 
-	// Demo 1:
-	// We create this test to reproduce a new issue.
 	[Fact]
 	public void When_address_becomes_used_its_removed_from_source()
 	{
