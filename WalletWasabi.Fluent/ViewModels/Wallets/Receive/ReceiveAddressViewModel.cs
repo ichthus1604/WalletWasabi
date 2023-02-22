@@ -56,11 +56,11 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		// IMPORTANT:
 		// This code is needed to "go back" when address becomes used
-		wallet.Addresses
-			.Watch(model.Text)
-			.Where(change => change.Current.IsUsed)
-			.Do(_ => context.NavigationService.GoBack())
-			.Subscribe();
+		//wallet.Addresses
+		//	.Watch(model.Text)
+		//	.Where(change => change.Current.IsUsed)
+		//	.Do(_ => context.NavigationService.GoBack())
+		//	.Subscribe();
 	}
 
 	public ReactiveCommand<Unit, bool[,]> GenerateQrCodeCommand { get; }
