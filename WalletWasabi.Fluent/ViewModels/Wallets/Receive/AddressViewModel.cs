@@ -7,26 +7,30 @@ using ReactiveUI;
 using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.UIServices;
 using WalletWasabi.Fluent.ViewModels.Dialogs;
-using AddressAction = System.Func<WalletWasabi.Fluent.Models.Wallets.IAddress, System.Threading.Tasks.Task>;
+
+//using AddressAction = System.Func<WalletWasabi.Fluent.Models.Wallets.IAddress, System.Threading.Tasks.Task>;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
-public partial class AddressViewModel
+public delegate Task AddressAction(IAddress address);
+
+public partial class AddressViewModel : ViewModelBase
 {
-	private readonly UIContext _context;
 	private readonly IAddress _address;
 	[AutoNotify] private string _addressText;
 	[AutoNotify] private IEnumerable<string> _label;
 
-	public AddressViewModel(AddressAction onEdit, AddressAction onShow, UIContext context, IAddress address)
+	public AddressViewModel(AddressAction onEdit, AddressAction onShow, IAddress address)
 	{
-		_context = context;
 		_address = address;
 		_addressText = address.Text;
 
 		address.WhenAnyValue(x => x.Labels).BindTo(this, viewModel => viewModel.Label);
 
-		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => context.Clipboard.SetTextAsync(AddressText));
+		CopyAddressCommand = ReactiveCommand.CreateFromTask(async foo =>
+		{
+			return UIContext.Clipboard.SetTextAsync(AddressText);
+		});
 		HideAddressCommand = ReactiveCommand.CreateFromTask(PromptHideAddress);
 		EditLabelCommand = ReactiveCommand.CreateFromTask(() => onEdit(address));
 		NavigateCommand = ReactiveCommand.CreateFromTask(() => onShow(address));
@@ -34,7 +38,7 @@ public partial class AddressViewModel
 
 	private async Task PromptHideAddress()
 	{
-		var result = await _context.DialogService.Show(new ConfirmHideAddressViewModel(_address));
+		var result = await UIContext.DialogService.Show(new ConfirmHideAddressViewModel(_address));
 
 		if (result.Result == false)
 		{
@@ -43,11 +47,11 @@ public partial class AddressViewModel
 
 		_address.Hide();
 
-		var isAddressCopied = await _context.Clipboard.GetTextAsync() == _address.Text;
+		var isAddressCopied = await UIContext.Clipboard.GetTextAsync() == _address.Text;
 
 		if (isAddressCopied)
 		{
-			await _context.Clipboard.ClearAsync();
+			await UIContext.Clipboard.ClearAsync();
 		}
 	}
 

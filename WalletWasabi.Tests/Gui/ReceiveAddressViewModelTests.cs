@@ -21,7 +21,7 @@ public class ReceiveAddressViewModelTests
 	{
 		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
 		var context = ContextWith(clipboard);
-		var sut = new ReceiveAddressViewModel(new TestWallet(), new TestAddress("SomeAddress"), context, false);
+		var sut = new ReceiveAddressViewModel(new TestWallet(), new TestAddress("SomeAddress"), false, context);
 
 		sut.CopyAddressCommand.Execute(null);
 
@@ -34,12 +34,12 @@ public class ReceiveAddressViewModelTests
 	{
 		var clipboard = Mock.Of<IClipboard>(MockBehavior.Loose);
 		var context = ContextWith(clipboard);
-		new ReceiveAddressViewModel(new TestWallet(), new TestAddress("SomeAddress"), context, true);
+		new ReceiveAddressViewModel(new TestWallet(), new TestAddress("SomeAddress"), true, context);
 		var mock = Mock.Get(clipboard);
 		mock.Verify(x => x.SetTextAsync("SomeAddress"));
 	}
 
-	// Demo 2: 
+	// Demo 2:
 	[Fact]
 	public void When_address_becomes_used_navigation_goes_back()
 	{
@@ -47,7 +47,7 @@ public class ReceiveAddressViewModelTests
 		var uiContext = ContextWith(navigationService);
 		var address = new TestAddress("SomeAddress");
 		var wallet = WalletWithAddresses(address);
-		new ReceiveAddressViewModel(wallet, address, uiContext, true);
+		new ReceiveAddressViewModel(wallet, address, true, uiContext);
 
 		address.IsUsed = true;
 

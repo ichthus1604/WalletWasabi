@@ -19,7 +19,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 {
 	private readonly ObservableAsPropertyHelper<bool[,]> _qrCode;
 
-	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, UIContext context, bool isAutoCopyEnabled)
+	public ReceiveAddressViewModel(IWalletModel wallet, IAddress model, bool isAutoCopyEnabled)
 	{
 		Model = model;
 		Address = model.Text;
@@ -30,7 +30,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		EnableBack = true;
 
-		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => context.Clipboard.SetTextAsync(Address));
+		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => UIContext.Clipboard.SetTextAsync(Address));
 
 		ShowOnHwWalletCommand = ReactiveCommand.CreateFromTask(ShowOnHwWalletAsync);
 
@@ -42,7 +42,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 
 		NextCommand = CancelCommand;
 
-		GenerateQrCodeCommand = ReactiveCommand.CreateFromObservable(() => context.QrCodeGenerator.Generate(model.Text));
+		GenerateQrCodeCommand = ReactiveCommand.CreateFromObservable(() => UIContext.QrCodeGenerator.Generate(model.Text));
 		_qrCode = GenerateQrCodeCommand.ToProperty(this, nameof(QrCode));
 
 		if (isAutoCopyEnabled)
@@ -59,7 +59,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 		wallet.Addresses
 			.Watch(model.Text)
 			.Where(change => change.Current.IsUsed)
-			.Do(_ => context.NavigationService.GoBack())
+			.Do(_ => UIContext.NavigationService.GoBack())
 			.Subscribe();
 	}
 

@@ -13,13 +13,11 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 [NavigationMetaData(Title = "Receive Addresses")]
 public partial class ReceiveAddressesViewModel : RoutableViewModel
 {
-	private readonly UIContext _context;
 	private readonly IWalletModel _wallet;
 
-	public ReceiveAddressesViewModel(IWalletModel wallet, UIContext context)
+	public ReceiveAddressesViewModel(IWalletModel wallet)
 	{
 		_wallet = wallet;
-		_context = context;
 
 		Source = CreateSource();
 
@@ -59,7 +57,7 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private AddressViewModel CreateAddressViewModel(IAddress address)
 	{
-		return new AddressViewModel(NavigateToAddressEditAsync, NavigateToAddressAsync, UIContext.Default, address);
+		return new AddressViewModel(NavigateToAddressEditAsync, NavigateToAddressAsync, address, UIContext);
 	}
 
 	private async Task NavigateToAddressEditAsync(IAddress address)
@@ -73,6 +71,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		_context.NavigationService.Go(new ReceiveAddressViewModel(_wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
+		UIContext.NavigationService.Go(new ReceiveAddressViewModel(_wallet, address, Services.UiConfig.Autocopy, UIContext));
 	}
 }

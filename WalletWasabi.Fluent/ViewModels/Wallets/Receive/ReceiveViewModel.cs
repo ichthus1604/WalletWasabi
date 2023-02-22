@@ -23,12 +23,10 @@ namespace WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 public partial class ReceiveViewModel : RoutableViewModel
 {
 	private readonly IWalletModel _wallet;
-	private readonly UIContext _context;
 
-	public ReceiveViewModel(IWalletModel wallet, UIContext context)
+	public ReceiveViewModel(IWalletModel wallet)
 	{
 		_wallet = wallet;
-		_context = context;
 		SetupCancel(enableCancel: true, enableCancelOnEscape: true, enableCancelOnPressed: true);
 
 		EnableBack = false;
@@ -63,11 +61,11 @@ public partial class ReceiveViewModel : RoutableViewModel
 		var address = _wallet.CreateReceiveAddress(SuggestionLabels.Labels);
 		SuggestionLabels.Labels.Clear();
 
-		Navigate().To(new ReceiveAddressViewModel(_wallet, address, UIContext.Default, Services.UiConfig.Autocopy));
+		Navigate().To(new ReceiveAddressViewModel(_wallet, address, Services.UiConfig.Autocopy, UIContext));
 	}
 
 	private void OnShowExistingAddresses()
 	{
-		_context.NavigationService.Go(new ReceiveAddressesViewModel(_wallet, _context));
+		UIContext.NavigationService.Go(new ReceiveAddressesViewModel(_wallet, UIContext));
 	}
 }

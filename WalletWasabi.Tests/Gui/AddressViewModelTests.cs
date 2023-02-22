@@ -22,8 +22,8 @@ public class AddressViewModelTests
 		var sut = new AddressViewModel(
 			_ => Task.CompletedTask,
 			_ => Task.CompletedTask,
-			context,
-			address);
+			address,
+			context);
 
 		sut.HideAddressCommand.Execute(null);
 
@@ -36,7 +36,7 @@ public class AddressViewModelTests
 		var testAddress = new TestAddress("ad");
 		var labels = new[] { "Label 1", "Label 2" };
 		testAddress.SetLabels(labels);
-		var sut = new AddressViewModel(_ => Task.CompletedTask, _ => Task.CompletedTask, Testing.NullUIContext, testAddress);
+		var sut = new AddressViewModel(_ => Task.CompletedTask, _ => Task.CompletedTask, testAddress, Testing.NullUIContext);
 
 		sut.AddressText.Should().Be(testAddress.Text);
 		sut.Label.Should().BeEquivalentTo(labels);
