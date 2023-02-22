@@ -24,8 +24,6 @@ public partial class AddressViewModel
 		_address = address;
 		_addressText = address.Text;
 
-		var o = address.Labels as INotifyCollectionChanged;
-
 		address.WhenAnyValue(x => x.Labels).BindTo(this, viewModel => viewModel.Label);
 
 		CopyAddressCommand = ReactiveCommand.CreateFromTask(() => context.Clipboard.SetTextAsync(AddressText));
@@ -44,7 +42,7 @@ public partial class AddressViewModel
 		}
 
 		_address.Hide();
-		
+
 		var isAddressCopied = await _context.Clipboard.GetTextAsync() == _address.Text;
 
 		if (isAddressCopied)
