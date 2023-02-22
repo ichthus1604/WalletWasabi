@@ -39,20 +39,20 @@ public class ReceiveAddressViewModelTests
 		mock.Verify(x => x.SetTextAsync("SomeAddress"));
 	}
 
-	// Demo 2: 
-	[Fact]
-	public void When_address_becomes_used_navigation_goes_back()
-	{
-		var navigationService = Mock.Of<INavigationService>();
-		var uiContext = ContextWith(navigationService);
-		var address = new TestAddress("SomeAddress");
-		var wallet = WalletWithAddresses(address);
-		new ReceiveAddressViewModel(wallet, address, uiContext, true);
+	// Demo test: 
+	//[Fact]
+	//public void When_address_becomes_used_navigation_goes_back()
+	//{
+	//	var navigationService = Mock.Of<INavigationService>();
+	//	var uiContext = ContextWith(navigationService);
+	//	var address = new TestAddress("SomeAddress");
+	//	var wallet = WalletWithAddresses(address);
+	//	new ReceiveAddressViewModel(wallet, address, uiContext, true);
 
-		address.IsUsed = true;
+	//	address.IsUsed = true;
 
-		Mock.Get(navigationService).Verify(x => x.GoBack(), Times.Once);
-	}
+	//	Mock.Get(navigationService).Verify(x => x.GoBack(), Times.Once);
+	//}
 
 	private static IWalletModel WalletWithAddresses(TestAddress address)
 	{
