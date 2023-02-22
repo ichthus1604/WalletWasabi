@@ -55,7 +55,7 @@ public partial class ReceiveAddressViewModel : RoutableViewModel
 			.Subscribe();
 
 		// IMPORTANT:
-		// This code is needed to fix go back when address becomes used
+		// This code is needed to "go back" when address becomes used
 		wallet.Addresses
 			.Watch(model.Text)
 			.Where(change => change.Current.IsUsed)
