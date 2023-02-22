@@ -28,21 +28,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 		SetupCancel(true, true, true);
 	}
 
-	// This is the wrong take. It will only get the items the first time. It won't refresh
-	// afterwards
-	private FlatTreeDataGridSource<AddressViewModel> CreateSourceBuggy()
-	{
-		var source = _wallet
-			.UnusedAddresses()
-			.ToCollection()
-			.Take(1)
-			.Wait()
-			.Select(CreateAddressViewModel);
-
-		return new FlatTreeDataGridSource<AddressViewModel>(source);
-	}
-
-	// This is the fixed code
 	private FlatTreeDataGridSource<AddressViewModel> CreateSource()
 	{
 		_wallet
