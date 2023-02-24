@@ -49,10 +49,10 @@ public class ReceiveAddressViewModelTests
 		var wallet = WalletWithAddresses(address);
 		new ReceiveAddressViewModel(wallet, address, true, uiContext);
 
-	//	address.IsUsed = true;
+		address.IsUsed = true;
 
-	//	Mock.Get(navigationService).Verify(x => x.GoBack(), Times.Once);
-	//}
+		Mock.Get(navigationService).Verify(x => x.GoBack(), Times.Once);
+	}
 
 	private static IWalletModel WalletWithAddresses(TestAddress address)
 	{
