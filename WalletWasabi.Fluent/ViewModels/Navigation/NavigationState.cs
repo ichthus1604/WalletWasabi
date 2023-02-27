@@ -2,7 +2,7 @@ namespace WalletWasabi.Fluent.ViewModels.Navigation;
 
 public class NavigationState
 {
-	private NavigationState(
+	public NavigationState(
 		INavigationStack<RoutableViewModel> homeScreenNavigation,
 		INavigationStack<RoutableViewModel> dialogScreenNavigation,
 		INavigationStack<RoutableViewModel> fullScreenNavigation,
@@ -35,5 +35,17 @@ public class NavigationState
 			dialogScreenNavigation,
 			fullScreenNavigation,
 			compactDialogScreenNavigation);
+	}
+
+	public INavigationStack<RoutableViewModel> Get(NavigationTarget target)
+	{
+		return target switch
+		{
+			NavigationTarget.HomeScreen => HomeScreenNavigation,
+			NavigationTarget.DialogScreen => DialogScreenNavigation,
+			NavigationTarget.FullScreen => FullScreenNavigation,
+			NavigationTarget.CompactDialogScreen => CompactDialogScreenNavigation,
+			_ => throw new NotSupportedException(),
+		};
 	}
 }

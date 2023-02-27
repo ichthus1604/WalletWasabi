@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using WalletWasabi.Fluent.Models.Wallets;
+using WalletWasabi.Fluent.UIServices;
+using WalletWasabi.Fluent.ViewModels.Wallets.Receive;
 
 namespace WalletWasabi.Fluent.ViewModels.Navigation;
 
@@ -180,5 +183,35 @@ public partial class NavigationStack<T> : ViewModelBase, INavigationStack<T> whe
 	private void UpdateCanNavigateBack()
 	{
 		CanNavigateBack = _backStack.Count > 0;
+	}
+
+	public IFluentRoutes<T> To(NavigationMode mode = NavigationMode.Normal)
+	{
+		return new FluentRoutes(this);
+	}
+
+	private class FluentRoutes : IFluentRoutes<T>
+	{
+		public FluentRoutes(NavigationStack<T> navigationStack)
+		{
+			NavigationStack = navigationStack;
+		}
+
+		public NavigationStack<T> NavigationStack { get; }
+
+		public UIContext UIContext => NavigationStack.UIContext;
+
+		public void To(T viewmodel, NavigationMode mode = NavigationMode.Normal)
+		{
+			NavigationStack.To(viewmodel, mode);
+		}
+	}
+}
+
+public static class FluentRoutesExtensions
+{
+	public static void ReceiveAddress(this IFluentRoutes<RoutableViewModel> fluentRoutes, IWalletModel wallet, IAddress model, bool isAutoCopyEnabled)
+	{
+		fluentRoutes.To(new ReceiveAddressViewModel(wallet, model, isAutoCopyEnabled, fluentRoutes.UIContext));
 	}
 }

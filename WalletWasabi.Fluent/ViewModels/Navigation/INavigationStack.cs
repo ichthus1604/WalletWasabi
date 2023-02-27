@@ -1,3 +1,5 @@
+using WalletWasabi.Fluent.UIServices;
+
 namespace WalletWasabi.Fluent.ViewModels.Navigation;
 
 public interface INavigationStack<T> where T : INavigatable
@@ -14,6 +16,8 @@ public interface INavigationStack<T> where T : INavigatable
 
 	void To(T viewmodel, NavigationMode mode = NavigationMode.Normal);
 
+	IFluentRoutes<T> To(NavigationMode mode = NavigationMode.Normal);
+
 	void Back();
 
 	void BackTo(T viewmodel);
@@ -21,4 +25,11 @@ public interface INavigationStack<T> where T : INavigatable
 	void BackTo<TViewModel>() where TViewModel : T;
 
 	void Clear();
+}
+
+public interface IFluentRoutes<T> where T : INavigatable
+{
+	UIContext UIContext { get; }
+
+	void To(T viewmodel, NavigationMode mode = NavigationMode.Normal);
 }

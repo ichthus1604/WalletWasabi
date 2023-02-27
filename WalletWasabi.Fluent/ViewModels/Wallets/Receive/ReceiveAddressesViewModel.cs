@@ -56,6 +56,6 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
-		UIContext.NavigationService.Go(new ReceiveAddressViewModel(_wallet, address, Services.UiConfig.Autocopy, UIContext));
+		Navigate().To().ReceiveAddress(_wallet, address, Services.UiConfig.Autocopy);
 	}
 }
