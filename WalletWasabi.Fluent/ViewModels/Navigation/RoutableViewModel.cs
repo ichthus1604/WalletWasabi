@@ -69,14 +69,7 @@ public abstract partial class RoutableViewModel : ViewModelBase, INavigatable
 
 	public INavigationStack<RoutableViewModel> Navigate()
 	{
-		var currentTarget = CurrentTarget == NavigationTarget.Default ? DefaultTarget : CurrentTarget;
-
-		return Navigate(currentTarget);
-	}
-
-	public INavigationStack<RoutableViewModel> Navigate(NavigationTarget currentTarget)
-	{
-		return UIContext.Navigate(currentTarget);
+		return UIContext.Navigate(CurrentTarget);
 	}
 
 	public void SetActive()
@@ -129,22 +122,6 @@ public abstract partial class RoutableViewModel : ViewModelBase, INavigatable
 		}
 	}
 
-	public async Task<DialogResult<TResult>> NavigateDialogAsync<TResult>(DialogViewModelBase<TResult> dialog)
-		=> await NavigateDialogAsync(dialog, CurrentTarget);
-
-	public static async Task<DialogResult<TResult>> NavigateDialogAsync<TResult>(DialogViewModelBase<TResult> dialog, NavigationTarget target, NavigationMode navigationMode = NavigationMode.Normal)
-	{
-		var dialogTask = dialog.GetDialogResultAsync();
-
-		Navigate(target).To(dialog, navigationMode);
-
-		var result = await dialogTask;
-
-		Navigate(target).Back();
-
-		return result;
-	}
-
 	protected async Task ShowErrorAsync(string title, string message, string caption, NavigationTarget target = NavigationTarget.Default)
 	{
 		var dialog = new ShowErrorDialogViewModel(message, title, caption);
@@ -155,7 +132,7 @@ public abstract partial class RoutableViewModel : ViewModelBase, INavigatable
 				? NavigationTarget.CompactDialogScreen
 				: NavigationTarget.DialogScreen;
 
-		await NavigateDialogAsync(dialog, navigationTarget);
+		await UIContext.Navigate().NavigateDialogAsync(dialog, navigationTarget);
 	}
 
 	protected void SetupCancel(bool enableCancel, bool enableCancelOnEscape, bool enableCancelOnPressed)

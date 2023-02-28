@@ -16,7 +16,7 @@ public interface INavigationStack<T> where T : INavigatable
 
 	void To(T viewmodel, NavigationMode mode = NavigationMode.Normal);
 
-	IFluentRoutes<T> To(NavigationMode mode = NavigationMode.Normal);
+	IFluentNavigate To();
 
 	void Back();
 
@@ -25,11 +25,4 @@ public interface INavigationStack<T> where T : INavigatable
 	void BackTo<TViewModel>() where TViewModel : T;
 
 	void Clear();
-}
-
-public interface IFluentRoutes<T> where T : INavigatable
-{
-	UIContext UIContext { get; }
-
-	void To(T viewmodel, NavigationMode mode = NavigationMode.Normal);
 }

@@ -34,25 +34,6 @@ public partial class AddressViewModel : ViewModelBase
 		NavigateCommand = ReactiveCommand.CreateFromTask(() => onShow(address));
 	}
 
-	private async Task PromptHideAddress()
-	{
-		var result = await UIContext.DialogService.Show(new ConfirmHideAddressViewModel(_address));
-
-		if (result.Result == false)
-		{
-			return;
-		}
-
-		_address.Hide();
-
-		var isAddressCopied = await UIContext.Clipboard.GetTextAsync() == _address.Text;
-
-		if (isAddressCopied)
-		{
-			await UIContext.Clipboard.ClearAsync();
-		}
-	}
-
 	public ICommand CopyAddressCommand { get; }
 
 	public ICommand HideAddressCommand { get; }

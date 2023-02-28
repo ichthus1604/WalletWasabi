@@ -1,10 +1,12 @@
 using System.Linq;
+using System.Net;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using DynamicData;
 using WalletWasabi.Fluent.Models.Wallets;
 using WalletWasabi.Fluent.UIServices;
+using WalletWasabi.Fluent.ViewModels.Dialogs;
 using WalletWasabi.Fluent.ViewModels.Dialogs.Base;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 
@@ -57,5 +59,25 @@ public partial class ReceiveAddressesViewModel : RoutableViewModel
 	private async Task NavigateToAddressAsync(IAddress address)
 	{
 		Navigate().To().ReceiveAddress(_wallet, address, Services.UiConfig.Autocopy);
+		Navigate().To()
+	}
+
+	private async Task PromptHideAddress(IAddress address)
+	{
+		var result = await Navigate().To().ConfirmHideAddressDialog(address);
+
+		if (result.Result == false)
+		{
+			return;
+		}
+
+		address.Hide();
+
+		var isAddressCopied = await UIContext.Clipboard.GetTextAsync() == address.Text;
+
+		if (isAddressCopied)
+		{
+			await UIContext.Clipboard.ClearAsync();
+		}
 	}
 }
