@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using System.Windows.Input;
 using Avalonia;
 using NBitcoin;
 using ReactiveUI;
-using WalletWasabi.Fluent.Extensions;
+using WalletWasabi.Fluent.Helpers;
 using WalletWasabi.Fluent.ViewModels.Navigation;
 
 namespace WalletWasabi.Fluent.ViewModels.AddWallet.Create;
@@ -15,26 +16,41 @@ namespace WalletWasabi.Fluent.ViewModels.AddWallet.Create;
 [NavigationMetaData(Title = "Recovery Words")]
 public partial class RecoveryWordsViewModel : RoutableViewModel
 {
+	private const int ClipboardAutoCleanTimeInSeconds = 30;
+
 	public RecoveryWordsViewModel(Mnemonic mnemonic, string walletName)
 	{
-		MnemonicWords = new List<RecoveryWordViewModel>();
-
-		for (int i = 0; i < mnemonic.Words.Length; i++)
-		{
-			MnemonicWords.Add(new RecoveryWordViewModel(i + 1, mnemonic.Words[i]));
-		}
-
+		MnemonicWords = mnemonic.Words.Select((w, i) => new RecoveryWordViewModel(i + 1, w)).ToList();
+		
 		EnableBack = true;
 
 		NextCommand = ReactiveCommand.Create(() => OnNext(mnemonic, walletName));
-
 		CancelCommand = ReactiveCommand.Create(OnCancel);
-		CopyToClipboardCommand = ReactiveCommand.CreateFromTask(OnCopyToClipboardAsync);
+		var copyCommand = ReactiveCommand.CreateFromTask(OnCopyToClipboardAsync);
+		CopyToClipboardCommand = copyCommand;
+		
+		ClipboardAutocleaner(copyCommand, TimeSpan.FromSeconds(ClipboardAutoCleanTimeInSeconds)).Subscribe();
+	}
+
+	private IObservable<Unit> ClipboardAutocleaner(IObservable<Unit> trigger, TimeSpan autocleanTime)
+	{
+		if (Application.Current?.Clipboard is null)
+		{
+			return Observable.Empty<Unit>();
+		}
+
+		return trigger
+			.Throttle(autocleanTime, RxApp.MainThreadScheduler)
+			.WithLatestFrom(ApplicationHelper.ClipboardTextChanged(), (_, clipboardText) => clipboardText == FormattedMnemonicWords)
+			.Where(isEqual => isEqual)
+			.SelectMany(_ => Observable.FromAsync(() => Application.Current.Clipboard.ClearAsync(), RxApp.MainThreadScheduler));
 	}
 
 	public ICommand CopyToClipboardCommand { get; }
 
 	public List<RecoveryWordViewModel> MnemonicWords { get; set; }
+
+	private string FormattedMnemonicWords => string.Join(", ", MnemonicWords.Select(x => x.Word));
 
 	private void OnNext(Mnemonic mnemonic, string walletName)
 	{
@@ -52,24 +68,8 @@ public partial class RecoveryWordsViewModel : RoutableViewModel
 		{
 			return;
 		}
-
-		var words =
-			MnemonicWords.Select(x => x.Word).ToArray();
-
-		var text = string.Join(", ", words);
-
-		await Application.Current.Clipboard.SetTextAsync(text);
-
-		Observable.Timer(TimeSpan.FromSeconds(30))
-				  .ObserveOn(RxApp.MainThreadScheduler)
-				  .SubscribeAsync(async _ =>
-					{
-						var currentText = await Application.Current.Clipboard.GetTextAsync();
-						if (currentText == text)
-						{
-							await Application.Current.Clipboard.ClearAsync();
-						}
-					});
+		
+		await Application.Current.Clipboard.SetTextAsync(FormattedMnemonicWords);
 	}
 
 	protected override void OnNavigatedTo(bool isInHistory, CompositeDisposable disposables)
