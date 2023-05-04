@@ -9,7 +9,7 @@ using WalletWasabi.Wallets;
 
 namespace WalletWasabi.Fluent.ViewModels.Wallets;
 
-public partial class WalletPageViewModel : StandaloneActivatableViewModel
+public partial class WalletPageViewModel : ViewModelBase
 {
 	[AutoNotify] private bool _isLoggedIn;
 	[AutoNotify] private bool _isSelected;
@@ -27,6 +27,29 @@ public partial class WalletPageViewModel : StandaloneActivatableViewModel
 		// Wallet property must be removed
 		Wallet = Services.WalletManager.GetWallets(false).First(x => x.WalletName == walletModel.Name);
 
+		this.WhenAnyValue(x => x.IsLoggedIn)
+		.Do(isLoggedIn =>
+		{
+			if (!isLoggedIn && CurrentPage is not { })
+			{
+				CurrentPage = new LoginViewModel(UiContext, WalletModel, Wallet);
+			}
+			else if (isLoggedIn && CurrentPage is LoginViewModel)
+			{
+				CurrentPage = new LoadingViewModel(Wallet);
+				IsLoading = true;
+			}
+		})
+		.Subscribe();
+
+		this.WhenAnyValue(x => x.WalletModel.IsLoggedIn)
+			.BindTo(this, x => x.IsLoggedIn);
+
+		this.WhenAnyObservable(x => x.WalletModel.State)
+			.Where(x => x == WalletState.Started)
+			.Do(_ => ShowWallet())
+			.Subscribe();
+
 		SetIcon();
 	}
 
@@ -35,44 +58,18 @@ public partial class WalletPageViewModel : StandaloneActivatableViewModel
 
 	public string Title => WalletModel.Name;
 
-	protected override void OnActivated(CompositeDisposable disposables)
+	protected void OnActivated(CompositeDisposable disposables)
 	{
 		IsSelected = true;
 
-		this.WhenAnyValue(x => x.CurrentPage)
-			.WhereNotNull()
-			.Do(x => UiContext.Navigate().To(x, NavigationTarget.HomeScreen, NavigationMode.Clear))
-			.Subscribe()
-			.DisposeWith(disposables);
-
-		this.WhenAnyValue(x => x.IsLoggedIn)
-			.Do(isLoggedIn =>
-			{
-				if (!isLoggedIn && CurrentPage is not { })
-				{
-					CurrentPage = new LoginViewModel(UiContext, WalletModel, Wallet);
-				}
-				else if (isLoggedIn && CurrentPage is LoginViewModel)
-				{
-					CurrentPage = new LoadingViewModel(Wallet);
-					IsLoading = true;
-				}
-			})
-			.Subscribe()
-			.DisposeWith(disposables);
-
-		WalletModel.WhenAnyValue(x => x.IsLoggedIn)
-				   .BindTo(this, x => x.IsLoggedIn)
-				   .DisposeWith(disposables);
-
-		WalletModel.State
-				   .Where(x => x == WalletState.Started)
-				   .Do(_ => ShowWallet())
-				   .Subscribe()
-				   .DisposeWith(disposables);
+		//this.WhenAnyValue(x => x.CurrentPage)
+		//	.WhereNotNull()
+		//	.Do(x => UiContext.Navigate().To(x, NavigationTarget.HomeScreen, NavigationMode.Clear))
+		//	.Subscribe()
+		//	.DisposeWith(disposables);
 	}
 
-	protected override void OnDeactivated()
+	protected void OnDeactivated()
 	{
 		IsSelected = false;
 	}

@@ -37,17 +37,19 @@ public partial class NavBarViewModel : ViewModelBase
 			.ObserveOn(RxApp.MainThreadScheduler)
 			.Do(x =>
 			{
-				if (x.OldValue is { } a)
-				{
-					a.Deactivate();
-				}
+				//if (x.OldValue is { } a)
+				//{
+				//	a.Deactivate();
+				//}
 
-				if (x.NewValue is { } b)
-				{
-					b.Activate();
-				}
+				//if (x.NewValue is { } b)
+				//{
+				//	b.Activate();
+				//}
 			})
 			.Subscribe();
+
+		//this.WhenAnyValue(x => x.SelectedWallet)
 
 		SelectedWallet = Wallets.FirstOrDefault(x => x.WalletModel.Name == UiContext.WalletList.DefaultWallet?.Name);
 	}
