@@ -54,6 +54,7 @@ public partial class SendViewModel : RoutableViewModel
 	[AutoNotify] private bool _isPayJoin;
 	[AutoNotify] private string? _payJoinEndPoint;
 	[AutoNotify] private bool _conversionReversed;
+	[AutoNotify] private bool _isConvertedValueEntered;
 
 	private SendViewModel(WalletViewModel walletVm)
 	{
@@ -130,7 +131,7 @@ public partial class SendViewModel : RoutableViewModel
 					await coinJoinManager.WalletEnteredSendingAsync(_wallet);
 				}
 
-				Navigate().To().TransactionPreview(walletVm, transactionInfo);
+				Navigate().To().TransactionPreview(walletVm, transactionInfo, IsConvertedValueEntered);
 			},
 			nextCommandCanExecute);
 

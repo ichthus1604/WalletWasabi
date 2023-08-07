@@ -64,6 +64,9 @@ public class DualCurrencyEntryBox : UserControl
 	public static readonly StyledProperty<CurrencyEntryBox?> LeftEntryBoxProperty =
 		AvaloniaProperty.Register<DualCurrencyEntryBox, CurrencyEntryBox?>(nameof(LeftEntryBox));
 
+	public static readonly StyledProperty<bool> IsConvertedValueEnteredProperty =
+		AvaloniaProperty.Register<DualCurrencyEntryBox, bool>(nameof(IsConvertedValueEntered), defaultBindingMode: BindingMode.TwoWay);
+
 	private CompositeDisposable? _disposable;
 	private Button? _swapButton;
 	private decimal _amountBtc;
@@ -174,6 +177,12 @@ public class DualCurrencyEntryBox : UserControl
 		set => SetValue(LeftEntryBoxProperty, value);
 	}
 
+	public bool IsConvertedValueEntered
+	{
+		get => GetValue(IsConvertedValueEnteredProperty);
+		set => SetValue(IsConvertedValueEnteredProperty, value);
+	}
+
 	protected override void OnLostFocus(RoutedEventArgs e)
 	{
 		base.OnLostFocus(e);
@@ -224,6 +233,7 @@ public class DualCurrencyEntryBox : UserControl
 
 	private void InputBtcString(string value)
 	{
+		IsConvertedValueEntered = false;
 		if (CurrencyInput.TryCorrectBitcoinAmount(value, out var better) && better != Constants.MaximumNumberOfBitcoins.ToString())
 		{
 			value = better;
@@ -243,6 +253,8 @@ public class DualCurrencyEntryBox : UserControl
 		{
 			return;
 		}
+
+		IsConvertedValueEntered = true;
 
 		if (decimal.TryParse(value, NumberStyles.Number, CurrencyInput.InvariantNumberFormat, out var decimalValue))
 		{

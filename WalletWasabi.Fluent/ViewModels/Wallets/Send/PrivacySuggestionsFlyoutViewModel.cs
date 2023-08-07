@@ -22,9 +22,9 @@ public partial class PrivacySuggestionsFlyoutViewModel : ViewModelBase
 	[AutoNotify] private bool _goodPrivacy;
 	[AutoNotify] private bool _maxPrivacy;
 
-	public PrivacySuggestionsFlyoutViewModel(Wallet wallet)
+	public PrivacySuggestionsFlyoutViewModel(Wallet wallet, bool displayFiatValues)
 	{
-		_privacySuggestionsModel = new PrivacySuggestionsModel(wallet);
+		_privacySuggestionsModel = new PrivacySuggestionsModel(wallet, displayFiatValues);
 	}
 
 	public ObservableCollection<PrivacyWarning> Warnings { get; } = new();

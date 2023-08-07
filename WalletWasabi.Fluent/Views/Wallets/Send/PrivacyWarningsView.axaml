@@ -219,7 +219,7 @@
                 <TextBlock Text="Full Privacy" Classes="title" />
                 <StackPanel Orientation="Horizontal" Classes="description">
                   <TextBlock Text="Send" />
-                  <TextBlock Text="{Binding DifferenceFiatText}" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
+                  <TextBlock Text="{Binding DifferenceText}" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
                   <TextBlock Text="to use only private coins." />
                 </StackPanel>
               </StackPanel>
@@ -236,7 +236,7 @@
                 <TextBlock Text="Better Privacy" Classes="title" />
                 <StackPanel Orientation="Horizontal" Classes="description">
                   <TextBlock Text="Send" />
-                  <TextBlock Text="{Binding DifferenceFiatText}" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
+                  <TextBlock Text="{Binding DifferenceText}" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
                   <TextBlock Text="to avoid non-private coins." />
                 </StackPanel>
               </StackPanel>
@@ -265,7 +265,7 @@
                 <TextBlock Text="Change Avoidance" Classes="title" />
                 <StackPanel Orientation="Horizontal" Classes="description">
                   <TextBlock Text="Send" />
-                  <TextBlock Text="{Binding DifferenceFiatText}" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
+                  <TextBlock Text="{Binding DifferenceText}" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
                   <TextBlock Text="to remove change." />
                 </StackPanel>
               </StackPanel>

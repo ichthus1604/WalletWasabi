@@ -41,7 +41,7 @@ public partial class TransactionPreviewViewModel : RoutableViewModel
 	[AutoNotify] private bool _canUndo;
 	[AutoNotify] private bool _isCoinControlVisible;
 
-	private TransactionPreviewViewModel(WalletViewModel walletViewModel, TransactionInfo info)
+	private TransactionPreviewViewModel(WalletViewModel walletViewModel, TransactionInfo info, bool displayFiatValues)
 	{
 		_undoHistory = new();
 		_wallet = walletViewModel.Wallet;
@@ -50,7 +50,7 @@ public partial class TransactionPreviewViewModel : RoutableViewModel
 		_currentTransactionInfo = info.Clone();
 		_cancellationTokenSource = new CancellationTokenSource();
 
-		PrivacySuggestions = new PrivacySuggestionsFlyoutViewModel(_wallet);
+		PrivacySuggestions = new PrivacySuggestionsFlyoutViewModel(_wallet, displayFiatValues);
 		CurrentTransactionSummary = new TransactionSummaryViewModel(this, _wallet, _info);
 		PreviewTransactionSummary = new TransactionSummaryViewModel(this, _wallet, _info, true);
 
