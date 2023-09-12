@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using DynamicData;
 using NBitcoin;
 using ReactiveUI;
 using WalletWasabi.Fluent.Extensions;
@@ -87,6 +88,10 @@ public partial class MainViewModel : ViewModelBase
 			.OfType<WalletViewModel>();
 
 		IsOobeBackgroundVisible = Services.UiConfig.Oobe;
+
+		UiContext.WalletRepository.Wallets
+								  .TrueForAny(x => x.Coinjoin.IsCoinjoining, x => x)
+								  .BindTo(this, x => x.IsCoinJoinActive);
 
 		RxApp.MainThreadScheduler.Schedule(async () =>
 		{
@@ -173,17 +178,6 @@ public partial class MainViewModel : ViewModelBase
 		DialogScreen.Clear();
 		FullScreen.Clear();
 		CompactDialogScreen.Clear();
-	}
-
-	public void InvalidateIsCoinJoinActive()
-	{
-		// TODO: Workaround for deprecation of WalletManagerViewModel
-		// REMOVE after IWalletModel.IsCoinjoining is implemented
-		IsCoinJoinActive =
-			NavBar.Wallets
-				  .Select(x => x.WalletViewModel)
-				  .WhereNotNull()
-				  .Any(x => x.IsCoinJoining);
 	}
 
 	public void Initialize()
