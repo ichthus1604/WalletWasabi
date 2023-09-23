@@ -41,24 +41,24 @@ public class App : Application
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
-				var uiContext = CreateUiContext();
-				UiContext.Default = uiContext;
-				_applicationStateManager =
-					new ApplicationStateManager(desktop, uiContext, _startInBg);
-
-				DataContext = _applicationStateManager.ApplicationViewModel;
-
-				desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-				desktop.Exit += (sender, args) =>
-				{
-					MainViewModel.Instance.ClearStacks();
-					MainViewModel.Instance.StatusIcon.Dispose();
-				};
-
 				RxApp.MainThreadScheduler.Schedule(
 					async () =>
 					{
 						await _backendInitialiseAsync!(); // Guaranteed not to be null when not in designer.
+
+						var uiContext = CreateUiContext();
+						UiContext.Default = uiContext;
+						_applicationStateManager =
+							new ApplicationStateManager(desktop, uiContext, _startInBg);
+
+						DataContext = _applicationStateManager.ApplicationViewModel;
+
+						desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+						desktop.Exit += (sender, args) =>
+						{
+							MainViewModel.Instance.ClearStacks();
+							MainViewModel.Instance.StatusIcon.Dispose();
+						};
 
 						MainViewModel.Instance.Initialize();
 					});
